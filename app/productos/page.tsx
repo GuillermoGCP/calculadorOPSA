@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { toast } from 'react-toastify'
 
 type Category =
@@ -38,6 +39,7 @@ const emptyForm: Product = {
 export default function ProductosPage() {
   const [list, setList] = useState<Product[]>([])
   const [form, setForm] = useState<Product>(emptyForm)
+  const searchParams = useSearchParams()
 
   const fetchList = async () => {
     const list = await fetch('/api/productos').then(res => res.json())
@@ -47,6 +49,16 @@ export default function ProductosPage() {
   useEffect(() => {
     fetchList().catch(() => {})
   }, [])
+
+  useEffect(() => {
+    const nameParam = searchParams.get('edit')
+    if (nameParam && list.length) {
+      const prod = list.find(p => p.name === nameParam)
+      if (prod) {
+        setForm(prod)
+      }
+    }
+  }, [searchParams, list])
 
   const saveProduct = async () => {
     if (!form.name) return

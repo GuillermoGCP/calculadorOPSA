@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 
 interface CostItem {
@@ -96,6 +96,7 @@ export default function Home() {
   }
 
   const searchParams = useSearchParams()
+  const router = useRouter()
 
   useEffect(() => {
     fetch('/api/empanadas')
@@ -363,7 +364,16 @@ export default function Home() {
                     ) : (
                       <>
                         {item.vat}
-                        <button onClick={() => toggleEdit(item.id)} className="ml-2 bg-blue-600 text-white px-2 py-1 rounded">Editar</button>
+                        <button
+                          onClick={() =>
+                            router.push(
+                              `/productos?edit=${encodeURIComponent(item.label)}`
+                            )
+                          }
+                          className="ml-2 bg-blue-600 text-white px-2 py-1 rounded"
+                        >
+                          Editar
+                        </button>
                         <button onClick={() => deleteItem(item.id)} className="ml-2 bg-red-600 text-white px-2 py-1 rounded">Borrar</button>
                       </>
                     )}
