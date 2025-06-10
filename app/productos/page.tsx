@@ -19,7 +19,21 @@ interface Product {
   category?: Category
 }
 
-const emptyForm: Product = { name: '', unitType: 'kilo', price: 0, vat: 21 }
+const categories: Category[] = [
+  'Relleno',
+  'Masa',
+  'Horneado',
+  'Envasado y Etiquetado',
+  'Mano de obra',
+]
+
+const emptyForm: Product = {
+  name: '',
+  unitType: 'kilo',
+  price: 0,
+  vat: 21,
+  category: 'Relleno',
+}
 
 export default function ProductosPage() {
   const [list, setList] = useState<Product[]>([])
@@ -84,6 +98,15 @@ export default function ProductosPage() {
           <option value="unidad">unidad</option>
           <option value="metro">metro</option>
         </select>
+        <select
+          value={form.category}
+          onChange={e => setForm({ ...form, category: e.target.value as Category })}
+          className="border rounded px-2 py-1"
+        >
+          {categories.map(cat => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
         <input
           type="number"
           step="0.0001"
@@ -104,19 +127,59 @@ export default function ProductosPage() {
           Guardar
         </button>
       </div>
-      <ul className="divide-y">
-        {list.map(prod => (
-          <li key={prod.name} className="py-2 flex justify-between items-center">
-            <span>
-              {prod.name} - {prod.price}€/ {prod.unitType} - IVA {prod.vat}%
-            </span>
-            <button className="text-red-600 ml-2 hover:underline" onClick={() => deleteProduct(prod.name)}>
-              Eliminar
-            </button>
-          </li>
-        ))}
-        {list.length === 0 && <li>No hay productos guardados</li>}
-      </ul>
+      {categories.map(cat => {
+        const items = list.filter(p => p.category === cat)
+        if (items.length === 0) return null
+        return (
+          <div key={cat} className="mb-4">
+            <h2 className="font-semibold mb-2">{cat}</h2>
+            <ul className="divide-y">
+              {items.map(prod => (
+                <li key={prod.name} className="py-2 flex justify-between items-center">
+                  <span>
+                    {prod.name} - {prod.price}€/ {prod.unitType} - IVA {prod.vat}%
+                  </span>
+                  <span>
+                    <button className="text-blue-600 mr-2 hover:underline" onClick={() => setForm(prod)}>
+                      Editar
+                    </button>
+                    <button className="text-red-600 hover:underline" onClick={() => deleteProduct(prod.name)}>
+                      Eliminar
+                    </button>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      })}
+      {list.filter(p => !p.category || !categories.includes(p.category)).length === 0 && list.length === 0 && (
+        <p>No hay productos guardados</p>
+      )}
+      {list.filter(p => !p.category || !categories.includes(p.category)).length > 0 && (
+        <div className="mb-4">
+          <h2 className="font-semibold mb-2">Sin categoría</h2>
+          <ul className="divide-y">
+            {list
+              .filter(p => !p.category || !categories.includes(p.category))
+              .map(prod => (
+                <li key={prod.name} className="py-2 flex justify-between items-center">
+                  <span>
+                    {prod.name} - {prod.price}€/ {prod.unitType} - IVA {prod.vat}%
+                  </span>
+                  <span>
+                    <button className="text-blue-600 mr-2 hover:underline" onClick={() => setForm(prod)}>
+                      Editar
+                    </button>
+                    <button className="text-red-600 hover:underline" onClick={() => deleteProduct(prod.name)}>
+                      Eliminar
+                    </button>
+                  </span>
+                </li>
+              ))}
+          </ul>
+        </div>
+      )}
     </div>
   )
 }
