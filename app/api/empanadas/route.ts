@@ -1,6 +1,5 @@
-import fs from 'fs'
-import path from 'path'
 import { NextResponse } from 'next/server'
+import { getDb } from '../../../lib/mongodb'
 
 interface CostItem {
   id: string
@@ -15,36 +14,19 @@ interface Empanada {
   margin: number
 }
 
-const dataFile = path.join(process.cwd(), 'data', 'empanadas.json')
-
-async function readData(): Promise<Empanada[]> {
-  try {
-    const fileContents = await fs.promises.readFile(dataFile, 'utf8')
-    return JSON.parse(fileContents)
-  } catch {
-    return []
-  }
+export async function GET() {
+  const db = await getDb()
+  const list = await db.collection<Empanada>('empanadas').find().toArray()
+  return NextResponse.json(list)
 }
 
-async function writeData(data: Empanada[]): Promise<void> {
-  await fs.promises.mkdir(path.dirname(dataFile), { recursive: true })
-  await fs.promises.writeFile(dataFile, JSON.stringify(data, null, 2))
-}
-
-export async function GET(): Promise<NextResponse<Empanada[]>> {
-  const data = await readData()
-  return NextResponse.json(data)
-}
-
-export async function POST(request: Request): Promise<NextResponse<{ ok: boolean }>> {
-  const data = await readData()
+export async function POST(request: Request) {
   const empanada = await request.json() as Empanada
-  const index = data.findIndex(e => e.name === empanada.name)
-  if (index !== -1) {
-    data[index] = empanada
-  } else {
-    data.push(empanada)
-  }
-  await writeData(data)
+  const db = await getDb()
+  await db.collection<Empanada>('empanadas').updateOne(
+    { name: empanada.name },
+    { $set: empanada },
+    { upsert: true }
+  )
   return NextResponse.json({ ok: true })
 }
