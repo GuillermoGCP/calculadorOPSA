@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 interface CostItem {
   id: string
@@ -61,10 +62,22 @@ export default function Home() {
     }
   }
 
+  const searchParams = useSearchParams()
+
   useEffect(() => {
     fetch('/api/empanadas')
       .then(res => res.json())
-      .then(setSaved)
+      .then(list => {
+        setSaved(list)
+        const nameParam = searchParams.get('emp')
+        if (nameParam) {
+          const emp = list.find(e => e.name === nameParam)
+          if (emp) {
+            loadEmpanada(emp)
+            setName(emp.name)
+          }
+        }
+      })
       .catch(() => {})
   }, [])
 
