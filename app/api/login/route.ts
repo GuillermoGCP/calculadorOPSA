@@ -1,21 +1,21 @@
 import { NextResponse } from 'next/server'
-import { getDb } from '../../../lib/mongodb'
+import connectDB from '../../../lib/mongoose'
+import User from '../../../models/User'
 
-interface User {
+interface Credentials {
   username: string
   password: string
 }
 
 export async function POST(request: Request) {
-  const { username, password } = await request.json() as User
-  const db = await getDb()
-  const users = db.collection<User>('users')
-  await users.updateOne(
+  const { username, password } = await request.json() as Credentials
+  await connectDB()
+  await User.updateOne(
     { username: 'Miguel' },
     { $setOnInsert: { username: 'Miguel', password: 'jefeOPSA' } },
     { upsert: true }
   )
-  const user = await users.findOne({ username, password })
+  const user = await User.findOne({ username, password })
   if (user) {
     return NextResponse.json({ ok: true })
   }
