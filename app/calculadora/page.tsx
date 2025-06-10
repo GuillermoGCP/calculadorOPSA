@@ -140,6 +140,7 @@ export default function Home() {
     setCosts(emp.costs.map(c => ({ ...c, isEditing: false })))
     setMargin(emp.margin)
     setShowTotals(false)
+    toast.success('Empanada cargada', { style: { background: '#16a34a', color: '#fff' } })
   }
 
   const total = costs.reduce((sum, item) => sum + (item.cost || 0), 0)
