@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const initialCosts = [
   { id: 'carne', category: 'Relleno', label: 'Carne', cost: 1.95 },
@@ -32,11 +32,43 @@ const initialCosts = [
 ]
 
 export default function Home() {
-  const [costs, setCosts] = useState(initialCosts)
+  const [costs, setCosts] = useState(initialCosts.map(c => ({ ...c, isEditing: false })))
   const [margin, setMargin] = useState(0)
+  const [showTotals, setShowTotals] = useState(false)
+  const [name, setName] = useState('')
+  const [saved, setSaved] = useState([])
+  const [selected, setSelected] = useState('')
+
+  useEffect(() => {
+    fetch('/api/empanadas')
+      .then(res => res.json())
+      .then(setSaved)
+      .catch(() => {})
+  }, [])
 
   const handleCostChange = (id, value) => {
     setCosts(costs.map(item => item.id === id ? { ...item, cost: value } : item))
+  }
+
+  const toggleEdit = id => {
+    setCosts(costs.map(item => item.id === id ? { ...item, isEditing: !item.isEditing } : item))
+  }
+
+  const saveEmpanada = async () => {
+    const payload = { name, costs: costs.map(({ isEditing, ...rest }) => rest), margin }
+    await fetch('/api/empanadas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    const list = await fetch('/api/empanadas').then(res => res.json())
+    setSaved(list)
+  }
+
+  const loadEmpanada = emp => {
+    setCosts(emp.costs.map(c => ({ ...c, isEditing: false })))
+    setMargin(emp.margin)
+    setShowTotals(false)
   }
 
   const total = costs.reduce((sum, item) => sum + parseFloat(item.cost || 0), 0)
@@ -48,8 +80,39 @@ export default function Home() {
   const categories = [...new Set(costs.map(c => c.category))]
 
   return (
-    <div className="p-4 font-sans max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Calculadora de Costes de Empanada de Carne</h1>
+
+    <div style={{ padding: '1rem', fontFamily: 'Arial, sans-serif' }}>
+      <h1>Calculadora de Costes de Empanada de Carne</h1>
+
+      <div style={{ marginBottom: '1rem' }}>
+        <input
+          type="text"
+          placeholder="Nombre de empanada"
+          value={name}
+          onChange={e => setName(e.target.value)}
+        />
+        <button onClick={saveEmpanada} style={{ marginLeft: '0.5rem' }}>Guardar empanada</button>
+      </div>
+
+      <div style={{ marginBottom: '1rem' }}>
+        <select value={selected} onChange={e => setSelected(e.target.value)}>
+          <option value="">Cargar empanada...</option>
+          {saved.map(emp => (
+            <option key={emp.name} value={emp.name}>{emp.name}</option>
+          ))}
+        </select>
+        <button
+          onClick={() => {
+            const emp = saved.find(e => e.name === selected)
+            if (emp) loadEmpanada(emp)
+          }}
+          style={{ marginLeft: '0.5rem' }}
+        >
+          Cargar
+        </button>
+      </div>
+
+
       {categories.map(cat => (
         <div key={cat} className="mb-4">
           <h2 className="text-xl font-semibold mb-2">{cat}</h2>
@@ -62,16 +125,27 @@ export default function Home() {
             </thead>
             <tbody>
               {costs.filter(c => c.category === cat).map(item => (
-                <tr key={item.id} className="odd:bg-gray-50">
-                  <td className="py-1 pr-2">{item.label}</td>
-                  <td className="py-1">
-                    <input
-                      className="border rounded px-2 py-1 w-24"
-                      type="number"
-                      value={item.cost}
-                      step="0.0001"
-                      onChange={e => handleCostChange(item.id, parseFloat(e.target.value))}
-                    />
+
+                <tr key={item.id}>
+                  <td>{item.label}</td>
+                  <td>
+                    {item.isEditing ? (
+                      <>
+                        <input
+                          type="number"
+                          value={item.cost}
+                          step="0.0001"
+                          onChange={e => handleCostChange(item.id, parseFloat(e.target.value))}
+                        />
+                        <button onClick={() => toggleEdit(item.id)} style={{ marginLeft: '0.5rem' }}>Guardar</button>
+                      </>
+                    ) : (
+                      <>
+                        {item.cost.toFixed(4)}
+                        <button onClick={() => toggleEdit(item.id)} style={{ marginLeft: '0.5rem' }}>Editar</button>
+                      </>
+                    )}
+
                   </td>
                 </tr>
               ))}
@@ -80,15 +154,10 @@ export default function Home() {
         </div>
       ))}
 
-      <div className="mt-4">
-        <p>Total: {total.toFixed(4)} €</p>
-        <p>IVA (10%): {vat.toFixed(4)} €</p>
-        <p>Total con IVA: {totalWithVat.toFixed(4)} €</p>
-      </div>
+      <div style={{ marginTop: '1rem' }}>
+        <label>
+          Margen de beneficio (%):
 
-      <div className="mt-4">
-        <label className="flex items-center space-x-2">
-          <span>Margen de beneficio (%):</span>
           <input
             className="border rounded px-2 py-1 w-24"
             type="number"
@@ -99,10 +168,21 @@ export default function Home() {
         </label>
       </div>
 
-      <div className="mt-4 font-semibold">
-        <p>Precio de venta: {sellingPrice.toFixed(4)} €</p>
-        <p>Beneficio: {profit.toFixed(4)} €</p>
-      </div>
+
+      <button onClick={() => setShowTotals(true)} style={{ marginTop: '1rem' }}>
+        Obtener gastos y beneficios
+      </button>
+
+      {showTotals && (
+        <div style={{ marginTop: '1rem' }}>
+          <p>Total: {total.toFixed(4)} €</p>
+          <p>IVA (10%): {vat.toFixed(4)} €</p>
+          <p>Total con IVA: {totalWithVat.toFixed(4)} €</p>
+          <p>Precio de venta: {sellingPrice.toFixed(4)} €</p>
+          <p>Beneficio: {profit.toFixed(4)} €</p>
+        </div>
+      )}
+
     </div>
   )
 }
