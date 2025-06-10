@@ -5,6 +5,7 @@ interface CostItem {
   category: string
   label: string
   cost: number
+  vat: number
 }
 
 export interface IEmpanada extends Document {
@@ -19,6 +20,7 @@ const CostItemSchema = new Schema<CostItem>(
     category: String,
     label: String,
     cost: Number,
+    vat: Number,
   },
   { _id: false }
 )
