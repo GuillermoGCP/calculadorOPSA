@@ -1,6 +1,7 @@
 "use client"
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { toast } from 'react-toastify'
 
 interface CostItem {
   id: string
@@ -121,13 +122,18 @@ export default function Home() {
       return
     }
     const payload: Empanada = { name, costs: costs.map(({ isEditing, ...rest }) => rest), margin }
-    await fetch('/api/empanadas', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    const list = await fetch('/api/empanadas').then(res => res.json())
-    setSaved(list)
+    try {
+      await fetch('/api/empanadas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      const list = await fetch('/api/empanadas').then(res => res.json())
+      setSaved(list)
+      toast.success('Empanada guardada', { style: { background: '#16a34a', color: '#fff' } })
+    } catch {
+      toast.error('Error al guardar', { style: { background: '#dc2626', color: '#fff' } })
+    }
   }
 
   const loadEmpanada = (emp: Empanada) => {
