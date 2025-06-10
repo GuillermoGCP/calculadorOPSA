@@ -53,6 +53,7 @@ export default function Home() {
   const [name, setName] = useState<string>('')
   const [saved, setSaved] = useState<Empanada[]>([])
   const [selected, setSelected] = useState<string>('')
+  const [newEntries, setNewEntries] = useState<Record<string, { label: string; cost: number }>>({})
 
   useEffect(() => {
     fetch('/api/empanadas')
@@ -65,8 +66,33 @@ export default function Home() {
     setCosts(costs.map(item => item.id === id ? { ...item, cost: value } : item))
   }
 
+  const handleLabelChange = (id: string, value: string) => {
+    setCosts(costs.map(item => item.id === id ? { ...item, label: value } : item))
+  }
+
   const toggleEdit = (id: string) => {
     setCosts(costs.map(item => item.id === id ? { ...item, isEditing: !item.isEditing } : item))
+  }
+
+  const handleNewEntryChange = (category: string, field: 'label' | 'cost', value: string | number) => {
+    setNewEntries(prev => ({
+      ...prev,
+      [category]: { ...prev[category], [field]: value }
+    }))
+  }
+
+  const addItem = (category: string) => {
+    const entry = newEntries[category]
+    if (!entry?.label) return
+    const newItem: CostItem = {
+      id: `${category.toLowerCase()}_${Date.now()}`,
+      category,
+      label: entry.label,
+      cost: Number(entry.cost) || 0,
+      isEditing: false
+    }
+    setCosts([...costs, newItem])
+    setNewEntries(prev => ({ ...prev, [category]: { label: '', cost: 0 } }))
   }
 
   const saveEmpanada = async () => {
@@ -147,7 +173,17 @@ export default function Home() {
               {costs.filter(c => c.category === cat).map(item => (
 
                 <tr key={item.id}>
-                  <td>{item.label}</td>
+                  <td>
+                    {item.isEditing ? (
+                      <input
+                        type="text"
+                        value={item.label}
+                        onChange={e => handleLabelChange(item.id, e.target.value)}
+                      />
+                    ) : (
+                      item.label
+                    )}
+                  </td>
                   <td>
                     {item.isEditing ? (
                       <>
@@ -169,6 +205,26 @@ export default function Home() {
                   </td>
                 </tr>
               ))}
+              <tr>
+                <td>
+                  <input
+                    type="text"
+                    placeholder="Nuevo concepto"
+                    value={newEntries[cat]?.label || ''}
+                    onChange={e => handleNewEntryChange(cat, 'label', e.target.value)}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    step="0.0001"
+                    placeholder="Costo"
+                    value={newEntries[cat]?.cost || 0}
+                    onChange={e => handleNewEntryChange(cat, 'cost', parseFloat(e.target.value))}
+                  />
+                  <button onClick={() => addItem(cat)} className="ml-2">Añadir</button>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>

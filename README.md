@@ -14,6 +14,6 @@ Proyecto de ejemplo en Next.js y TypeScript para calcular los costes de una empa
    ```
 3. Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 
-En la interfaz se pueden editar individualmente los costes con el botón **Editar** y guardarlos con **Guardar**. Puedes asignar un nombre a la configuración actual y almacenarla usando **Guardar empanada**.
+En la interfaz se pueden editar individualmente los costes y también el nombre de cada concepto con el botón **Editar**. Además es posible añadir nuevos conceptos en cada bloque de categoría. Puedes asignar un nombre a la configuración actual y almacenarla usando **Guardar empanada**.
 
 Las empanadas guardadas se muestran en una lista desplegable desde donde se pueden precargar para realizar ajustes y, tras pulsar **Obtener gastos y beneficios**, consultar los totales (IVA incluido) y el beneficio según el margen indicado.
