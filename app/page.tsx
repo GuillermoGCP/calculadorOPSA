@@ -1,6 +1,20 @@
 "use client"
 import { useState, useEffect } from 'react'
 
+interface CostItem {
+  id: string
+  category: string
+  label: string
+  cost: number
+  isEditing?: boolean
+}
+
+interface Empanada {
+  name: string
+  costs: CostItem[]
+  margin: number
+}
+
 const initialCosts = [
   { id: 'carne', category: 'Relleno', label: 'Carne', cost: 1.95 },
   { id: 'cebolla', category: 'Relleno', label: 'Cebolla', cost: 0.8 },
@@ -33,12 +47,12 @@ const initialCosts = [
 ]
 
 export default function Home() {
-  const [costs, setCosts] = useState(initialCosts.map(c => ({ ...c, isEditing: false })))
-  const [margin, setMargin] = useState(0)
-  const [showTotals, setShowTotals] = useState(false)
-  const [name, setName] = useState('')
-  const [saved, setSaved] = useState([])
-  const [selected, setSelected] = useState('')
+  const [costs, setCosts] = useState<CostItem[]>(initialCosts.map(c => ({ ...c, isEditing: false })))
+  const [margin, setMargin] = useState<number>(0)
+  const [showTotals, setShowTotals] = useState<boolean>(false)
+  const [name, setName] = useState<string>('')
+  const [saved, setSaved] = useState<Empanada[]>([])
+  const [selected, setSelected] = useState<string>('')
 
   useEffect(() => {
     fetch('/api/empanadas')
@@ -47,16 +61,16 @@ export default function Home() {
       .catch(() => {})
   }, [])
 
-  const handleCostChange = (id, value) => {
+  const handleCostChange = (id: string, value: number) => {
     setCosts(costs.map(item => item.id === id ? { ...item, cost: value } : item))
   }
 
-  const toggleEdit = id => {
+  const toggleEdit = (id: string) => {
     setCosts(costs.map(item => item.id === id ? { ...item, isEditing: !item.isEditing } : item))
   }
 
   const saveEmpanada = async () => {
-    const payload = { name, costs: costs.map(({ isEditing, ...rest }) => rest), margin }
+    const payload: Empanada = { name, costs: costs.map(({ isEditing, ...rest }) => rest), margin }
     await fetch('/api/empanadas', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -66,19 +80,19 @@ export default function Home() {
     setSaved(list)
   }
 
-  const loadEmpanada = emp => {
+  const loadEmpanada = (emp: Empanada) => {
     setCosts(emp.costs.map(c => ({ ...c, isEditing: false })))
     setMargin(emp.margin)
     setShowTotals(false)
   }
 
-  const total = costs.reduce((sum, item) => sum + parseFloat(item.cost || 0), 0)
+  const total = costs.reduce((sum, item) => sum + (item.cost || 0), 0)
   const vat = total * 0.10
   const totalWithVat = total + vat
-  const sellingPrice = totalWithVat * (1 + (parseFloat(margin) || 0) / 100)
+  const sellingPrice = totalWithVat * (1 + (margin || 0) / 100)
   const profit = sellingPrice - totalWithVat
 
-  const categories = [...new Set(costs.map(c => c.category))]
+  const categories = Array.from(new Set(costs.map(c => c.category)))
 
   return (
 
@@ -164,7 +178,7 @@ export default function Home() {
             type="number"
             value={margin}
             step="0.01"
-            onChange={e => setMargin(e.target.value)}
+            onChange={e => setMargin(parseFloat(e.target.value))}
           />
         </label>
       </div>

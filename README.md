@@ -1,6 +1,6 @@
 # calculadorOPSA
 
-Proyecto de ejemplo en Next.js para calcular los costes de una empanada de carne y estimar diferentes tipos de beneficio.
+Proyecto de ejemplo en Next.js y TypeScript para calcular los costes de una empanada de carne y estimar diferentes tipos de beneficio.
 
 ## Ejecución en local
 
