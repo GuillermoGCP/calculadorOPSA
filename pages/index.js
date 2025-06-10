@@ -80,6 +80,7 @@ export default function Home() {
   const categories = [...new Set(costs.map(c => c.category))]
 
   return (
+
     <div style={{ padding: '1rem', fontFamily: 'Arial, sans-serif' }}>
       <h1>Calculadora de Costes de Empanada de Carne</h1>
 
@@ -111,18 +112,20 @@ export default function Home() {
         </button>
       </div>
 
+
       {categories.map(cat => (
-        <div key={cat} style={{ marginBottom: '1rem' }}>
-          <h2>{cat}</h2>
-          <table>
+        <div key={cat} className="mb-4">
+          <h2 className="text-xl font-semibold mb-2">{cat}</h2>
+          <table className="w-full border-collapse table-auto">
             <thead>
-              <tr>
-                <th style={{ textAlign: 'left' }}>Concepto</th>
-                <th style={{ textAlign: 'left' }}>Costo (€)</th>
+              <tr className="text-left border-b">
+                <th className="pb-1">Concepto</th>
+                <th className="pb-1">Costo (€)</th>
               </tr>
             </thead>
             <tbody>
               {costs.filter(c => c.category === cat).map(item => (
+
                 <tr key={item.id}>
                   <td>{item.label}</td>
                   <td>
@@ -142,6 +145,7 @@ export default function Home() {
                         <button onClick={() => toggleEdit(item.id)} style={{ marginLeft: '0.5rem' }}>Editar</button>
                       </>
                     )}
+
                   </td>
                 </tr>
               ))}
@@ -153,15 +157,17 @@ export default function Home() {
       <div style={{ marginTop: '1rem' }}>
         <label>
           Margen de beneficio (%):
+
           <input
+            className="border rounded px-2 py-1 w-24"
             type="number"
             value={margin}
             step="0.01"
             onChange={e => setMargin(e.target.value)}
-            style={{ marginLeft: '0.5rem' }}
           />
         </label>
       </div>
+
 
       <button onClick={() => setShowTotals(true)} style={{ marginTop: '1rem' }}>
         Obtener gastos y beneficios
@@ -176,6 +182,7 @@ export default function Home() {
           <p>Beneficio: {profit.toFixed(4)} €</p>
         </div>
       )}
+
     </div>
   )
 }
