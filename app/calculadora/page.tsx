@@ -18,6 +18,23 @@ interface Empanada {
   margin: number
 }
 
+interface Product {
+  name: string
+  unitType: 'kilo' | 'envase' | 'unidad'
+  price: number
+  vat: number
+  category?: string
+}
+
+interface NewEntry {
+  productName?: string
+  name: string
+  unitType: 'kilo' | 'envase' | 'unidad'
+  price: number
+  vat: number
+  quantity: number
+}
+
 const initialCosts = [
   { id: 'carne', category: 'Relleno', label: 'Carne', cost: 1.95, vat: 10 },
   { id: 'cebolla', category: 'Relleno', label: 'Cebolla', cost: 0.8, vat: 10 },
@@ -59,7 +76,8 @@ export default function Home() {
   const [name, setName] = useState<string>('')
   const [saved, setSaved] = useState<Empanada[]>([])
   const [selected, setSelected] = useState<string>('')
-  const [newEntries, setNewEntries] = useState<Record<string, { label: string; cost: number; vat: number }>>({})
+  const [products, setProducts] = useState<Product[]>([])
+  const [newEntries, setNewEntries] = useState<Record<string, NewEntry>>({})
 
   const deleteItem = (id: string) => {
     if (confirm('¿Eliminar concepto?')) {
@@ -84,6 +102,11 @@ export default function Home() {
         }
       })
       .catch(() => {})
+
+    fetch('/api/productos')
+      .then(res => res.json())
+      .then(list => setProducts(list))
+      .catch(() => {})
   }, [])
 
   const handleCostChange = (id: string, value: number) => {
@@ -104,7 +127,7 @@ export default function Home() {
 
   const handleNewEntryChange = (
     category: string,
-    field: 'label' | 'cost' | 'vat',
+    field: keyof NewEntry,
     value: string | number
   ) => {
     setNewEntries(prev => ({
@@ -113,21 +136,73 @@ export default function Home() {
     }))
   }
 
+  const handleProductSelect = (category: string, name: string) => {
+    if (!name) {
+      setNewEntries(prev => ({
+        ...prev,
+        [category]: {
+          name: '',
+          unitType: 'kilo',
+          price: 0,
+          vat: defaultVatForCategory(category),
+          quantity: 0,
+        },
+      }))
+      return
+    }
+    const prod = products.find(p => p.name === name)
+    if (prod) {
+      setNewEntries(prev => ({
+        ...prev,
+        [category]: {
+          productName: prod.name,
+          name: prod.name,
+          unitType: prod.unitType,
+          price: prod.price,
+          vat: prod.vat,
+          quantity: 1,
+        },
+      }))
+    }
+  }
+
   const addItem = (category: string) => {
     const entry = newEntries[category]
-    if (!entry?.label) return
+    if (!entry?.name) return
+    const cost = (entry.price || 0) * (entry.quantity || 0)
     const newItem: CostItem = {
       id: `${category.toLowerCase()}_${Date.now()}`,
       category,
-      label: entry.label,
-      cost: Number(entry.cost) || 0,
+      label: entry.name,
+      cost,
       vat: entry.vat ?? defaultVatForCategory(category),
       isEditing: false
+    }
+    if (!entry.productName) {
+      fetch('/api/productos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: entry.name,
+          unitType: entry.unitType,
+          price: entry.price,
+          vat: entry.vat,
+          category,
+        })
+      })
+        .then(() => fetch('/api/productos').then(res => res.json()).then(setProducts))
+        .catch(() => {})
     }
     setCosts([...costs, newItem])
     setNewEntries(prev => ({
       ...prev,
-      [category]: { label: '', cost: 0, vat: defaultVatForCategory(category) }
+      [category]: {
+        name: '',
+        unitType: 'kilo',
+        price: 0,
+        vat: defaultVatForCategory(category),
+        quantity: 0,
+      }
     }))
   }
 
@@ -268,24 +343,73 @@ export default function Home() {
                 </tr>
               ))}
               <tr>
-                <td>
-                  <input
-                    type="text"
-                    placeholder="Nuevo concepto"
-                    value={newEntries[cat]?.label || ''}
-                    onChange={e => handleNewEntryChange(cat, 'label', e.target.value)}
-                    className="border rounded px-2 py-1"
-                  />
+                <td className="align-top">
+                  <select
+                    value={newEntries[cat]?.productName || ''}
+                    onChange={e => handleProductSelect(cat, e.target.value)}
+                    className="border rounded px-2 py-1 mr-2"
+                  >
+                    <option value="">Nuevo producto...</option>
+                    {products
+                      .filter(p => !costs.some(c => c.label === p.name))
+                      .map(p => (
+                        <option key={p.name} value={p.name}>
+                          {p.name}
+                        </option>
+                      ))}
+                  </select>
+                  {!newEntries[cat]?.productName && (
+                    <input
+                      type="text"
+                      placeholder="Nombre"
+                      value={newEntries[cat]?.name || ''}
+                      onChange={e => handleNewEntryChange(cat, 'name', e.target.value)}
+                      className="border rounded px-2 py-1"
+                    />
+                  )}
                 </td>
                 <td>
-                  <input
-                    type="number"
-                    step="0.0001"
-                    placeholder="Costo"
-                    value={newEntries[cat]?.cost || 0}
-                    onChange={e => handleNewEntryChange(cat, 'cost', parseFloat(e.target.value))}
-                    className="border rounded px-2 py-1 w-24"
-                  />
+                  {newEntries[cat]?.productName ? (
+                    <>
+                      <input
+                        type="number"
+                        step="0.0001"
+                        placeholder="Cantidad"
+                        value={newEntries[cat]?.quantity || 0}
+                        onChange={e => handleNewEntryChange(cat, 'quantity', parseFloat(e.target.value))}
+                        className="border rounded px-2 py-1 w-24"
+                      />
+                      <span className="ml-2 text-sm">{newEntries[cat]?.unitType}</span>
+                    </>
+                  ) : (
+                    <>
+                      <input
+                        type="number"
+                        step="0.0001"
+                        placeholder="Precio"
+                        value={newEntries[cat]?.price || 0}
+                        onChange={e => handleNewEntryChange(cat, 'price', parseFloat(e.target.value))}
+                        className="border rounded px-2 py-1 w-24"
+                      />
+                      <input
+                        type="number"
+                        step="0.0001"
+                        placeholder="Cantidad"
+                        value={newEntries[cat]?.quantity || 0}
+                        onChange={e => handleNewEntryChange(cat, 'quantity', parseFloat(e.target.value))}
+                        className="border rounded px-2 py-1 w-24 ml-2"
+                      />
+                      <select
+                        value={newEntries[cat]?.unitType || 'kilo'}
+                        onChange={e => handleNewEntryChange(cat, 'unitType', e.target.value as any)}
+                        className="border rounded px-2 py-1 ml-2"
+                      >
+                        <option value="kilo">kilo</option>
+                        <option value="envase">envase</option>
+                        <option value="unidad">unidad</option>
+                      </select>
+                    </>
+                  )}
                 </td>
                 <td>
                   <input
@@ -296,6 +420,13 @@ export default function Home() {
                     onChange={e => handleNewEntryChange(cat, 'vat', parseFloat(e.target.value))}
                     className="border rounded px-2 py-1 w-16"
                   />
+                  {newEntries[cat]?.productName && (
+                    <span className="ml-2 text-sm">
+                      Coste:{' '}
+                      {((newEntries[cat].price || 0) * (newEntries[cat].quantity || 0)).toFixed(4)}
+                      €
+                    </span>
+                  )}
                   <button onClick={() => addItem(cat)} className="ml-2 bg-green-600 text-white px-2 py-1 rounded">Añadir</button>
                 </td>
               </tr>

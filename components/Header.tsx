@@ -33,6 +33,12 @@ export default function Header() {
               Ver empanadas guardadas
             </Link>
             <Link
+              href="/productos"
+              className={`mr-4 hover:underline ${isActive('/productos') ? 'text-yellow-200 font-bold' : ''}`}
+            >
+              Productos
+            </Link>
+            <Link
               href="/registro"
               className={`hover:underline ${isActive('/registro') ? 'text-yellow-200 font-bold' : ''}`}
             >
