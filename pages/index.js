@@ -48,24 +48,25 @@ export default function Home() {
   const categories = [...new Set(costs.map(c => c.category))]
 
   return (
-    <div style={{ padding: '1rem', fontFamily: 'Arial, sans-serif' }}>
-      <h1>Calculadora de Costes de Empanada de Carne</h1>
+    <div className="p-4 font-sans max-w-3xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Calculadora de Costes de Empanada de Carne</h1>
       {categories.map(cat => (
-        <div key={cat} style={{ marginBottom: '1rem' }}>
-          <h2>{cat}</h2>
-          <table>
+        <div key={cat} className="mb-4">
+          <h2 className="text-xl font-semibold mb-2">{cat}</h2>
+          <table className="w-full border-collapse table-auto">
             <thead>
-              <tr>
-                <th style={{ textAlign: 'left' }}>Concepto</th>
-                <th style={{ textAlign: 'left' }}>Costo (€)</th>
+              <tr className="text-left border-b">
+                <th className="pb-1">Concepto</th>
+                <th className="pb-1">Costo (€)</th>
               </tr>
             </thead>
             <tbody>
               {costs.filter(c => c.category === cat).map(item => (
-                <tr key={item.id}>
-                  <td>{item.label}</td>
-                  <td>
+                <tr key={item.id} className="odd:bg-gray-50">
+                  <td className="py-1 pr-2">{item.label}</td>
+                  <td className="py-1">
                     <input
+                      className="border rounded px-2 py-1 w-24"
                       type="number"
                       value={item.cost}
                       step="0.0001"
@@ -79,26 +80,26 @@ export default function Home() {
         </div>
       ))}
 
-      <div style={{ marginTop: '1rem' }}>
+      <div className="mt-4">
         <p>Total: {total.toFixed(4)} €</p>
         <p>IVA (10%): {vat.toFixed(4)} €</p>
         <p>Total con IVA: {totalWithVat.toFixed(4)} €</p>
       </div>
 
-      <div style={{ marginTop: '1rem' }}>
-        <label>
-          Margen de beneficio (%):
+      <div className="mt-4">
+        <label className="flex items-center space-x-2">
+          <span>Margen de beneficio (%):</span>
           <input
+            className="border rounded px-2 py-1 w-24"
             type="number"
             value={margin}
             step="0.01"
             onChange={e => setMargin(e.target.value)}
-            style={{ marginLeft: '0.5rem' }}
           />
         </label>
       </div>
 
-      <div style={{ marginTop: '1rem' }}>
+      <div className="mt-4 font-semibold">
         <p>Precio de venta: {sellingPrice.toFixed(4)} €</p>
         <p>Beneficio: {profit.toFixed(4)} €</p>
       </div>
