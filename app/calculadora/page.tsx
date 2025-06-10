@@ -55,6 +55,12 @@ export default function Home() {
   const [selected, setSelected] = useState<string>('')
   const [newEntries, setNewEntries] = useState<Record<string, { label: string; cost: number }>>({})
 
+  const deleteItem = (id: string) => {
+    if (confirm('¿Eliminar concepto?')) {
+      setCosts(costs.filter(item => item.id !== id))
+    }
+  }
+
   useEffect(() => {
     fetch('/api/empanadas')
       .then(res => res.json())
@@ -127,8 +133,8 @@ export default function Home() {
 
   return (
 
-    <div className="p-4 font-sans max-w-screen-lg mx-auto bg-white rounded shadow">
-      <h1>Calculadora de Costes de Empanada de Carne</h1>
+    <div className="p-6 mt-6 font-sans max-w-screen-lg mx-auto bg-white rounded-lg shadow-lg">
+      <h1 className="text-2xl font-bold mb-4">Calculadora de Costes de Empanadas</h1>
 
       <div className="mb-4">
         <input
@@ -136,12 +142,13 @@ export default function Home() {
           placeholder="Nombre de empanada"
           value={name}
           onChange={e => setName(e.target.value)}
+          className="border rounded px-2 py-1"
         />
-        <button onClick={saveEmpanada} className="ml-2">Guardar empanada</button>
+        <button onClick={saveEmpanada} className="ml-2 bg-green-600 text-white px-3 py-1 rounded">Guardar empanada</button>
       </div>
 
       <div className="mb-4">
-        <select value={selected} onChange={e => setSelected(e.target.value)}>
+        <select value={selected} onChange={e => setSelected(e.target.value)} className="border rounded px-2 py-1">
           <option value="">Cargar empanada...</option>
           {saved.map(emp => (
             <option key={emp.name} value={emp.name}>{emp.name}</option>
@@ -152,7 +159,7 @@ export default function Home() {
             const emp = saved.find(e => e.name === selected)
             if (emp) loadEmpanada(emp)
           }}
-          className="ml-2"
+          className="ml-2 bg-green-600 text-white px-3 py-1 rounded"
         >
           Cargar
         </button>
@@ -179,6 +186,7 @@ export default function Home() {
                         type="text"
                         value={item.label}
                         onChange={e => handleLabelChange(item.id, e.target.value)}
+                        className="border rounded px-2 py-1"
                       />
                     ) : (
                       item.label
@@ -192,13 +200,15 @@ export default function Home() {
                           value={item.cost}
                           step="0.0001"
                           onChange={e => handleCostChange(item.id, parseFloat(e.target.value))}
+                          className="border rounded px-2 py-1 w-24"
                         />
-                        <button onClick={() => toggleEdit(item.id)} className="ml-2">Guardar</button>
+                        <button onClick={() => toggleEdit(item.id)} className="ml-2 bg-blue-600 text-white px-2 py-1 rounded">Guardar</button>
                       </>
                     ) : (
                       <>
                         {item.cost.toFixed(4)}
-                        <button onClick={() => toggleEdit(item.id)} className="ml-2">Editar</button>
+                        <button onClick={() => toggleEdit(item.id)} className="ml-2 bg-blue-600 text-white px-2 py-1 rounded">Editar</button>
+                        <button onClick={() => deleteItem(item.id)} className="ml-2 bg-red-600 text-white px-2 py-1 rounded">Borrar</button>
                       </>
                     )}
 
@@ -212,6 +222,7 @@ export default function Home() {
                     placeholder="Nuevo concepto"
                     value={newEntries[cat]?.label || ''}
                     onChange={e => handleNewEntryChange(cat, 'label', e.target.value)}
+                    className="border rounded px-2 py-1"
                   />
                 </td>
                 <td>
@@ -221,8 +232,9 @@ export default function Home() {
                     placeholder="Costo"
                     value={newEntries[cat]?.cost || 0}
                     onChange={e => handleNewEntryChange(cat, 'cost', parseFloat(e.target.value))}
+                    className="border rounded px-2 py-1 w-24"
                   />
-                  <button onClick={() => addItem(cat)} className="ml-2">Añadir</button>
+                  <button onClick={() => addItem(cat)} className="ml-2 bg-green-600 text-white px-2 py-1 rounded">Añadir</button>
                 </td>
               </tr>
             </tbody>
@@ -245,7 +257,7 @@ export default function Home() {
       </div>
 
 
-      <button onClick={() => setShowTotals(true)} className="mt-4">
+      <button onClick={() => setShowTotals(true)} className="mt-4 bg-green-700 text-white px-4 py-2 rounded">
         Obtener gastos y beneficios
       </button>
 

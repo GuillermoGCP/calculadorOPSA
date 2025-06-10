@@ -7,8 +7,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <head>
         <script src="https://cdn.tailwindcss.com"></script>
       </head>
-      <body className="bg-green-50 text-gray-900 flex flex-col min-h-screen">
-        <header className="bg-green-600 text-white py-4 text-center text-lg md:text-2xl font-bold">
+      <body className="bg-gradient-to-br from-green-50 to-green-100 text-gray-900 flex flex-col min-h-screen">
+        <header className="bg-green-600 text-white py-6 shadow-md text-center text-lg md:text-2xl font-bold">
           O pan de San Antonio
         </header>
         <main className="flex-grow">
