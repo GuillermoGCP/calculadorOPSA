@@ -1,5 +1,5 @@
 module.exports = {
   env: {
-    JWT_SECRET: process.env.JWT_SECRET,
+    STATIC_TOKEN: process.env.STATIC_TOKEN,
   },
 };
