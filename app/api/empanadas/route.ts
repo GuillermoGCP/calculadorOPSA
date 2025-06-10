@@ -31,3 +31,26 @@ export async function POST(request: Request) {
   )
   return NextResponse.json({ ok: true })
 }
+
+export async function DELETE(request: Request) {
+  await connectDB()
+
+  const { searchParams } = new URL(request.url)
+  let name = searchParams.get('name')
+
+  if (!name) {
+    try {
+      const body = await request.json()
+      name = body?.name
+    } catch {
+      // ignore json parse error
+    }
+  }
+
+  if (!name) {
+    return NextResponse.json({ error: 'Name required' }, { status: 400 })
+  }
+
+  await Empanada.deleteOne({ name })
+  return NextResponse.json({ ok: true })
+}
