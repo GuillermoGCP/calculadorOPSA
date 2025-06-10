@@ -13,12 +13,15 @@ export interface IEmpanada extends Document {
   margin: number
 }
 
-const CostItemSchema = new Schema<CostItem>({
-  id: String,
-  category: String,
-  label: String,
-  cost: Number,
-}, { _id: false })
+const CostItemSchema = new Schema<CostItem>(
+  {
+    id: String,
+    category: String,
+    label: String,
+    cost: Number,
+  },
+  { _id: false }
+)
 
 const EmpanadaSchema = new Schema<IEmpanada>({
   name: { type: String, required: true, unique: true },
@@ -26,5 +29,7 @@ const EmpanadaSchema = new Schema<IEmpanada>({
   margin: { type: Number, required: true },
 })
 
-const Empanada = (mongoose.models.Empanada as Model<IEmpanada>) || mongoose.model<IEmpanada>('Empanada', EmpanadaSchema)
+const Empanada =
+  (mongoose.models.Empanada as Model<IEmpanada>) ||
+  mongoose.model<IEmpanada>('Empanada', EmpanadaSchema)
 export default Empanada
