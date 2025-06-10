@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import connectDB from '../../../lib/mongoose'
 import User from '../../../models/User'
-import { sign } from '../../../lib/jwt'
 
 interface Credentials {
   username: string
@@ -17,8 +16,7 @@ export async function POST(request: Request) {
   }
   try {
     await User.create({ username, password })
-    const secret = process.env.JWT_SECRET || 'secret'
-    const token = sign({ username }, secret)
+    const token = process.env.STATIC_TOKEN || ''
     const res = NextResponse.json({ ok: true })
     res.cookies.set({
       name: 'token',
