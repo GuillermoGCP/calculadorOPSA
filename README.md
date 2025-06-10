@@ -1,6 +1,6 @@
 # calculadorOPSA
 
-Proyecto de ejemplo en Next.js para calcular dinámicamente los costes de producción de una empanada de carne y estimar diferentes tipos de beneficio.
+Proyecto de ejemplo en Next.js para calcular los costes de una empanada de carne y estimar diferentes tipos de beneficio.
 
 ## Ejecución en local
 
@@ -14,4 +14,6 @@ Proyecto de ejemplo en Next.js para calcular dinámicamente los costes de produc
    ```
 3. Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 
-En la interfaz se pueden modificar los costes unitarios, elegir un margen de beneficio porcentual y consultar los totales automáticamente (incluyendo el 10 % de IVA).
+En la interfaz se pueden editar individualmente los costes con el botón **Editar** y guardarlos con **Guardar**. Puedes asignar un nombre a la configuración actual y almacenarla usando **Guardar empanada**.
+
+Las empanadas guardadas se muestran en una lista desplegable desde donde se pueden precargar para realizar ajustes y, tras pulsar **Obtener gastos y beneficios**, consultar los totales (IVA incluido) y el beneficio según el margen indicado.
