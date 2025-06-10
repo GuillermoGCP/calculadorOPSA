@@ -18,18 +18,27 @@ interface Empanada {
   margin: number
 }
 
+type Category =
+  | 'Relleno'
+  | 'Masa'
+  | 'Horneado'
+  | 'Envasado y Etiquetado'
+  | 'Mano de obra'
+
+type UnitType = 'kilo' | 'envase' | 'unidad' | 'metro'
+
 interface Product {
   name: string
-  unitType: 'kilo' | 'envase' | 'unidad'
+  unitType: UnitType
   price: number
   vat: number
-  category?: string
+  category?: Category
 }
 
 interface NewEntry {
   productName?: string
   name: string
-  unitType: 'kilo' | 'envase' | 'unidad'
+  unitType: UnitType
   price: number
   vat: number
   quantity: number
@@ -407,6 +416,7 @@ export default function Home() {
                         <option value="kilo">kilo</option>
                         <option value="envase">envase</option>
                         <option value="unidad">unidad</option>
+                        <option value="metro">metro</option>
                       </select>
                     </>
                   )}

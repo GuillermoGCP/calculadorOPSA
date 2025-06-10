@@ -2,12 +2,21 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
+type Category =
+  | 'Relleno'
+  | 'Masa'
+  | 'Horneado'
+  | 'Envasado y Etiquetado'
+  | 'Mano de obra'
+
+type UnitType = 'kilo' | 'envase' | 'unidad' | 'metro'
+
 interface Product {
   name: string
-  unitType: 'kilo' | 'envase' | 'unidad'
+  unitType: UnitType
   price: number
   vat: number
-  category?: string
+  category?: Category
 }
 
 const emptyForm: Product = { name: '', unitType: 'kilo', price: 0, vat: 21 }
@@ -73,6 +82,7 @@ export default function ProductosPage() {
           <option value="kilo">kilo</option>
           <option value="envase">envase</option>
           <option value="unidad">unidad</option>
+          <option value="metro">metro</option>
         </select>
         <input
           type="number"
