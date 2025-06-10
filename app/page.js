@@ -82,20 +82,20 @@ export default function Home() {
 
   return (
 
-    <div style={{ padding: '1rem', fontFamily: 'Arial, sans-serif' }}>
+    <div className="p-4 font-sans max-w-screen-lg mx-auto bg-white rounded shadow">
       <h1>Calculadora de Costes de Empanada de Carne</h1>
 
-      <div style={{ marginBottom: '1rem' }}>
+      <div className="mb-4">
         <input
           type="text"
           placeholder="Nombre de empanada"
           value={name}
           onChange={e => setName(e.target.value)}
         />
-        <button onClick={saveEmpanada} style={{ marginLeft: '0.5rem' }}>Guardar empanada</button>
+        <button onClick={saveEmpanada} className="ml-2">Guardar empanada</button>
       </div>
 
-      <div style={{ marginBottom: '1rem' }}>
+      <div className="mb-4">
         <select value={selected} onChange={e => setSelected(e.target.value)}>
           <option value="">Cargar empanada...</option>
           {saved.map(emp => (
@@ -107,7 +107,7 @@ export default function Home() {
             const emp = saved.find(e => e.name === selected)
             if (emp) loadEmpanada(emp)
           }}
-          style={{ marginLeft: '0.5rem' }}
+          className="ml-2"
         >
           Cargar
         </button>
@@ -138,12 +138,12 @@ export default function Home() {
                           step="0.0001"
                           onChange={e => handleCostChange(item.id, parseFloat(e.target.value))}
                         />
-                        <button onClick={() => toggleEdit(item.id)} style={{ marginLeft: '0.5rem' }}>Guardar</button>
+                        <button onClick={() => toggleEdit(item.id)} className="ml-2">Guardar</button>
                       </>
                     ) : (
                       <>
                         {item.cost.toFixed(4)}
-                        <button onClick={() => toggleEdit(item.id)} style={{ marginLeft: '0.5rem' }}>Editar</button>
+                        <button onClick={() => toggleEdit(item.id)} className="ml-2">Editar</button>
                       </>
                     )}
 
@@ -155,7 +155,7 @@ export default function Home() {
         </div>
       ))}
 
-      <div style={{ marginTop: '1rem' }}>
+      <div className="mt-4">
         <label>
           Margen de beneficio (%):
 
@@ -170,12 +170,12 @@ export default function Home() {
       </div>
 
 
-      <button onClick={() => setShowTotals(true)} style={{ marginTop: '1rem' }}>
+      <button onClick={() => setShowTotals(true)} className="mt-4">
         Obtener gastos y beneficios
       </button>
 
       {showTotals && (
-        <div style={{ marginTop: '1rem' }}>
+        <div className="mt-4">
           <p>Total: {total.toFixed(4)} €</p>
           <p>IVA (10%): {vat.toFixed(4)} €</p>
           <p>Total con IVA: {totalWithVat.toFixed(4)} €</p>
