@@ -1,3 +1,12 @@
 node_modules
 .next
 data/empanadas.json
+.env*
+npm-debug.log*
+yarn-error.log*
+.DS_Store
+.vercel
+out
+coverage
+dist
+build
