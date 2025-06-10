@@ -7,6 +7,7 @@ interface CostItem {
   category: string
   label: string
   cost: number
+  vat: number
 }
 
 interface EmpanadaPayload {
