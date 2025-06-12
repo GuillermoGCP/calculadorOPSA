@@ -6,9 +6,7 @@ import ToastProvider from '../components/ToastProvider'
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="es">
-      <head>
-        <script src="https://cdn.tailwindcss.com"></script>
-      </head>
+      <head />
       <body className="bg-gradient-to-br from-green-50 to-green-100 text-gray-900 flex flex-col min-h-screen">
         <Header />
         <ToastProvider />
