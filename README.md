@@ -31,7 +31,7 @@ Se ha añadido soporte para descargar los datos en formato `.xlsx`:
 
 ## Uso de Tailwind CSS
 
-Este proyecto utiliza la CDN de Tailwind de forma predeterminada, tal como se incluye en `app/layout.js`.
+Este proyecto utiliza la CDN de Tailwind de forma predeterminada, tal como se incluye en `app/layout.tsx`.
 
 Si prefieres un flujo de trabajo con Tailwind compilado, instala las dependencias necesarias y genera la configuraci\u00f3n:
 
@@ -40,7 +40,7 @@ npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p
 ```
 
-A continuaci\u00f3n elimina la etiqueta `<script>` de Tailwind de `app/layout.js` y en su lugar importa el CSS generado por Tailwind.
+A continuaci\u00f3n elimina la etiqueta `<script>` de Tailwind de `app/layout.tsx` y en su lugar importa el CSS generado por Tailwind.
 
 El comando `npm run build` se encargar\u00e1 de procesar los estilos cada vez que construyas el proyecto.
 
