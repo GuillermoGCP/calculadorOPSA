@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 
 type Category =
@@ -40,11 +40,15 @@ export default function ProductosPage() {
   const [list, setList] = useState<Product[]>([])
   const [form, setForm] = useState<Product>(emptyForm)
   const searchParams = useSearchParams()
+  const router = useRouter()
+  const returnUrl = searchParams.get('return') || '/calculadora'
 
   const fetchList = async () => {
     const list = await fetch('/api/productos').then(res => res.json())
     setList(list)
   }
+
+  const editing = Boolean(searchParams.get('edit'))
 
   useEffect(() => {
     fetchList().catch(() => {})
@@ -92,6 +96,14 @@ export default function ProductosPage() {
   return (
     <div className="p-6 mt-6 max-w-md mx-auto bg-white rounded-lg shadow-lg">
       <h1 className="text-xl font-bold mb-4">Productos</h1>
+      {returnUrl && (
+        <button
+          onClick={() => router.push(returnUrl)}
+          className="mb-4 bg-blue-600 text-white px-2 py-1 rounded"
+        >
+          Regresar
+        </button>
+      )}
       <div className="flex flex-col gap-2 mb-4">
         <input
           type="text"
@@ -139,58 +151,62 @@ export default function ProductosPage() {
           Guardar
         </button>
       </div>
-      {categories.map(cat => {
-        const items = list.filter(p => p.category === cat)
-        if (items.length === 0) return null
-        return (
-          <div key={cat} className="mb-4">
-            <h2 className="font-semibold mb-2">{cat}</h2>
-            <ul className="divide-y">
-              {items.map(prod => (
-                <li key={prod.name} className="py-2 flex justify-between items-center">
-                  <span>
-                    {prod.name} - {prod.price}€/ {prod.unitType} - IVA {prod.vat}%
-                  </span>
-                  <span>
-                    <button className="text-blue-600 mr-2 hover:underline" onClick={() => setForm(prod)}>
-                      Editar
-                    </button>
-                    <button className="text-red-600 hover:underline" onClick={() => deleteProduct(prod.name)}>
-                      Eliminar
-                    </button>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )
-      })}
-      {list.filter(p => !p.category || !categories.includes(p.category)).length === 0 && list.length === 0 && (
-        <p>No hay productos guardados</p>
-      )}
-      {list.filter(p => !p.category || !categories.includes(p.category)).length > 0 && (
-        <div className="mb-4">
-          <h2 className="font-semibold mb-2">Sin categoría</h2>
-          <ul className="divide-y">
-            {list
-              .filter(p => !p.category || !categories.includes(p.category))
-              .map(prod => (
-                <li key={prod.name} className="py-2 flex justify-between items-center">
-                  <span>
-                    {prod.name} - {prod.price}€/ {prod.unitType} - IVA {prod.vat}%
-                  </span>
-                  <span>
-                    <button className="text-blue-600 mr-2 hover:underline" onClick={() => setForm(prod)}>
-                      Editar
-                    </button>
-                    <button className="text-red-600 hover:underline" onClick={() => deleteProduct(prod.name)}>
-                      Eliminar
-                    </button>
-                  </span>
-                </li>
-              ))}
-          </ul>
-        </div>
+      {!editing && (
+        <>
+          {categories.map(cat => {
+            const items = list.filter(p => p.category === cat)
+            if (items.length === 0) return null
+            return (
+              <div key={cat} className="mb-4">
+                <h2 className="font-semibold mb-2">{cat}</h2>
+                <ul className="divide-y">
+                  {items.map(prod => (
+                    <li key={prod.name} className="py-2 flex justify-between items-center">
+                      <span>
+                        {prod.name} - {prod.price}€/ {prod.unitType} - IVA {prod.vat}%
+                      </span>
+                      <span>
+                        <button className="text-blue-600 mr-2 hover:underline" onClick={() => setForm(prod)}>
+                          Editar
+                        </button>
+                        <button className="text-red-600 hover:underline" onClick={() => deleteProduct(prod.name)}>
+                          Eliminar
+                        </button>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          })}
+          {list.filter(p => !p.category || !categories.includes(p.category)).length === 0 && list.length === 0 && (
+            <p>No hay productos guardados</p>
+          )}
+          {list.filter(p => !p.category || !categories.includes(p.category)).length > 0 && (
+            <div className="mb-4">
+              <h2 className="font-semibold mb-2">Sin categoría</h2>
+              <ul className="divide-y">
+                {list
+                  .filter(p => !p.category || !categories.includes(p.category))
+                  .map(prod => (
+                    <li key={prod.name} className="py-2 flex justify-between items-center">
+                      <span>
+                        {prod.name} - {prod.price}€/ {prod.unitType} - IVA {prod.vat}%
+                      </span>
+                      <span>
+                        <button className="text-blue-600 mr-2 hover:underline" onClick={() => setForm(prod)}>
+                          Editar
+                        </button>
+                        <button className="text-red-600 hover:underline" onClick={() => deleteProduct(prod.name)}>
+                          Eliminar
+                        </button>
+                      </span>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          )}
+        </>
       )}
     </div>
   )
