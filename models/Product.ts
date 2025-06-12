@@ -1,12 +1,6 @@
 import mongoose, { Schema, Document, Model } from 'mongoose'
 
-export enum Category {
-  Relleno = 'Relleno',
-  Masa = 'Masa',
-  Horneado = 'Horneado',
-  EnvasadoEtiquetado = 'Envasado y Etiquetado',
-  ManoDeObra = 'Mano de obra',
-}
+export type Category = string
 
 export enum UnitType {
   Kilo = 'kilo',
@@ -32,7 +26,7 @@ const ProductSchema = new Schema<IProduct>({
   },
   price: { type: Number, required: true },
   vat: { type: Number, required: true },
-  category: { type: String, enum: Object.values(Category) },
+  category: { type: String },
 })
 
 const Product =

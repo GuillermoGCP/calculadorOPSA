@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server'
 import connectDB from '../../../lib/mongoose'
-import Product, { UnitType, Category } from '../../../models/Product'
+import Product, { UnitType } from '../../../models/Product'
 
 interface ProductPayload {
   name: string
   unitType: UnitType
   price: number
   vat: number
-  category?: Category
+  category?: string
 }
 
 export async function GET() {
@@ -20,9 +20,6 @@ export async function POST(request: Request) {
   const product = (await request.json()) as ProductPayload
   if (!Object.values(UnitType).includes(product.unitType)) {
     return NextResponse.json({ error: 'Invalid unit type' }, { status: 400 })
-  }
-  if (product.category && !Object.values(Category).includes(product.category)) {
-    return NextResponse.json({ error: 'Invalid category' }, { status: 400 })
   }
   await connectDB()
   await Product.updateOne({ name: product.name }, { $set: product }, { upsert: true })
