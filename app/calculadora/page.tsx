@@ -52,7 +52,7 @@ interface NewEntry {
   quantity: number
 }
 
-const initialCosts = [
+const initialCosts: CostItem[] = [
   { id: 'carne', category: 'Relleno', label: 'Carne', price: 1.95, quantity: 1, vat: 10, unitType: 'kilo' },
   { id: 'cebolla', category: 'Relleno', label: 'Cebolla', price: 0.8, quantity: 1, vat: 10, unitType: 'kilo' },
   { id: 'azafran', category: 'Relleno', label: 'Azafrán', price: 0.025, quantity: 1, vat: 10, unitType: 'kilo' },
