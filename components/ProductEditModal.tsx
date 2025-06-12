@@ -52,7 +52,7 @@ export default function ProductEditModal({ product, onClose, onSaved, categories
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-4 rounded shadow-lg w-80">
+      <div className="bg-white p-4 rounded shadow-lg w-11/12 sm:w-96">
         <h2 className="text-lg font-semibold mb-2">Editar producto</h2>
         <div className="flex flex-col gap-2 mb-2">
           <label className="flex flex-col">
