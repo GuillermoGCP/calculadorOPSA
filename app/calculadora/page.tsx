@@ -247,11 +247,11 @@ export default function Home() {
     }))
   }
 
-  const saveEmpanada = async (overrideName?: string) => {
+  const saveEmpanada = async (overrideName?: string, skipConfirm?: boolean) => {
     const empName = overrideName ?? name
     if (!empName) return
     const exists = saved.some(e => e.name === empName)
-    if (exists && !confirm('Ya existe una empanada con ese nombre. ¿Desea sobrescribirla?')) {
+    if (!skipConfirm && exists && !confirm('Ya existe una empanada con ese nombre. ¿Desea sobrescribirla?')) {
       return
     }
     const payload: Empanada = {
@@ -339,6 +339,14 @@ export default function Home() {
           className="border rounded px-2 py-1"
         />
         <button onClick={saveEmpanada} className="ml-2 bg-green-600 text-white px-3 py-1 rounded">Guardar empanada</button>
+        {loadedEmpanada && (
+          <button
+            onClick={() => saveEmpanada(loadedEmpanada.name, true)}
+            className="ml-2 bg-blue-600 text-white px-3 py-1 rounded"
+          >
+            Actualizar empanada
+          </button>
+        )}
       </div>
 
       <div className="mb-4">
