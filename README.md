@@ -44,3 +44,7 @@ A continuaci\u00f3n elimina la etiqueta `<script>` de Tailwind de `app/layout.ts
 
 El comando `npm run build` se encargar\u00e1 de procesar los estilos cada vez que construyas el proyecto.
 
+
+## Licencia
+
+Este proyecto se distribuye bajo la licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más información.
