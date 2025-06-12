@@ -24,7 +24,7 @@ export default function Header() {
   }
   return (
     <header className="bg-green-600 text-white py-4 shadow-md">
-      <div className="container mx-auto flex justify-between items-center px-4">
+      <div className="container mx-auto flex items-center justify-between px-4">
         <h1 className="text-lg md:text-2xl font-bold">O pan de San Antonio</h1>
         {inside && (
           <>
@@ -35,26 +35,26 @@ export default function Header() {
             >
               Menu
             </button>
-            <nav data-testid="desktop-nav" className="hidden md:flex text-sm md:text-base">
-              <button onClick={logout} className="mr-4 hover:underline">Cerrar sesión</button>
+            <nav data-testid="desktop-nav" className="hidden md:flex space-x-4 text-sm md:text-base">
+              <button onClick={logout} className="hover:underline">Cerrar sesión</button>
               <Link
                 href="/calculadora"
                 onClick={e => handleNav('/calculadora', e)}
-                className={`mr-4 hover:underline ${isActive('/calculadora') ? 'text-yellow-200 font-bold' : ''}`}
+                className={`hover:underline ${isActive('/calculadora') ? 'text-yellow-200 font-bold' : ''}`}
               >
                 Calculadora
               </Link>
               <Link
                 href="/empanadas"
                 onClick={e => handleNav('/empanadas', e)}
-                className={`mr-4 hover:underline ${isActive('/empanadas') ? 'text-yellow-200 font-bold' : ''}`}
+                className={`hover:underline ${isActive('/empanadas') ? 'text-yellow-200 font-bold' : ''}`}
               >
                 Ver empanadas guardadas
               </Link>
               <Link
                 href="/productos"
                 onClick={e => handleNav('/productos', e)}
-                className={`mr-4 hover:underline ${isActive('/productos') ? 'text-yellow-200 font-bold' : ''}`}
+                className={`hover:underline ${isActive('/productos') ? 'text-yellow-200 font-bold' : ''}`}
               >
                 Productos
               </Link>
@@ -70,26 +70,26 @@ export default function Header() {
         )}
       </div>
       {inside && (
-        <nav data-testid="mobile-nav" className={`${menuOpen ? 'block' : 'hidden'} md:hidden px-4 text-sm mt-2`}>
-          <button onClick={logout} className="block mb-2 hover:underline">Cerrar sesión</button>
+        <nav data-testid="mobile-nav" className={`${menuOpen ? 'block' : 'hidden'} md:hidden px-4 text-sm mt-2 space-y-2`}>
+          <button onClick={logout} className="block hover:underline">Cerrar sesión</button>
           <Link
             href="/calculadora"
             onClick={e => handleNav('/calculadora', e)}
-            className={`block mb-2 hover:underline ${isActive('/calculadora') ? 'text-yellow-200 font-bold' : ''}`}
+            className={`block hover:underline ${isActive('/calculadora') ? 'text-yellow-200 font-bold' : ''}`}
           >
             Calculadora
           </Link>
           <Link
             href="/empanadas"
             onClick={e => handleNav('/empanadas', e)}
-            className={`block mb-2 hover:underline ${isActive('/empanadas') ? 'text-yellow-200 font-bold' : ''}`}
+            className={`block hover:underline ${isActive('/empanadas') ? 'text-yellow-200 font-bold' : ''}`}
           >
             Ver empanadas guardadas
           </Link>
           <Link
             href="/productos"
             onClick={e => handleNav('/productos', e)}
-            className={`block mb-2 hover:underline ${isActive('/productos') ? 'text-yellow-200 font-bold' : ''}`}
+            className={`block hover:underline ${isActive('/productos') ? 'text-yellow-200 font-bold' : ''}`}
           >
             Productos
           </Link>
