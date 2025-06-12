@@ -115,30 +115,30 @@ export default function ProductosPage() {
           Regresar
         </button>
       )}
+      <div className="flex gap-2 items-end mb-4">
+        <label className="flex flex-col flex-grow">
+          Nueva categoría
+          <input
+            type="text"
+            value={newCategory}
+            onChange={e => setNewCategory(e.target.value)}
+            className="border rounded px-2 py-1"
+          />
+        </label>
+        <button
+          onClick={() => {
+            if (!newCategory) return
+            const cats = [...categories, newCategory]
+            setCategories(cats)
+            saveCategories(cats)
+            setNewCategory('')
+          }}
+          className="bg-blue-600 text-white px-2 py-1 rounded"
+        >
+          Añadir
+        </button>
+      </div>
       <div className="flex flex-col gap-2 mb-4">
-        <div className="flex gap-2 items-end">
-          <label className="flex flex-col flex-grow">
-            Nueva categoría
-            <input
-              type="text"
-              value={newCategory}
-              onChange={e => setNewCategory(e.target.value)}
-              className="border rounded px-2 py-1"
-            />
-          </label>
-          <button
-            onClick={() => {
-              if (!newCategory) return
-              const cats = [...categories, newCategory]
-              setCategories(cats)
-              saveCategories(cats)
-              setNewCategory('')
-            }}
-            className="bg-blue-600 text-white px-2 py-1 rounded"
-          >
-            Añadir
-          </button>
-        </div>
         <label className="flex flex-col">
           Nombre
           <input
