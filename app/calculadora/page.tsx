@@ -99,10 +99,15 @@ export default function Home() {
   const [newEntries, setNewEntries] = useState<Record<string, NewEntry>>({})
   const [modalProduct, setModalProduct] = useState<Product | null>(null)
   const [showModal, setShowModal] = useState<boolean>(false)
+  const [dirty, setDirty] = useState<boolean>(false)
+  const [loadedEmpanada, setLoadedEmpanada] = useState<Empanada | null>(null)
+  const [pendingAction, setPendingAction] = useState<{ href?: string; emp?: Empanada } | null>(null)
+  const [showExitModal, setShowExitModal] = useState<boolean>(false)
 
   const deleteItem = (id: string) => {
     if (confirm('¿Eliminar concepto?')) {
       setCosts(costs.filter(item => item.id !== id))
+      setDirty(true)
     }
   }
 
@@ -115,6 +120,30 @@ export default function Home() {
 
   const searchParams = useSearchParams()
   const router = useRouter()
+
+  useEffect(() => {
+    (window as any).calculatorDirty = dirty
+  }, [dirty])
+
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (dirty) {
+        e.preventDefault()
+        e.returnValue = ''
+      }
+    }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [dirty])
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      const detail = e.detail as { href?: string }
+      requestNavigation({ href: detail.href })
+    }
+    window.addEventListener('calculator:navigate', handler)
+    return () => window.removeEventListener('calculator:navigate', handler)
+  }, [dirty, saved])
 
   useEffect(() => {
     fetch('/api/empanadas')
@@ -158,6 +187,7 @@ export default function Home() {
           : value
       return { ...item, quantity: qty }
     }))
+    setDirty(true)
   }
 
 
@@ -242,6 +272,7 @@ export default function Home() {
         .catch(() => {})
     }
     setCosts([...costs, newItem])
+    setDirty(true)
     setNewEntries(prev => ({
       ...prev,
       [category]: {
@@ -254,14 +285,15 @@ export default function Home() {
     }))
   }
 
-  const saveEmpanada = async () => {
-    if (!name) return
-    const exists = saved.some(e => e.name === name)
+  const saveEmpanada = async (overrideName?: string) => {
+    const empName = overrideName ?? name
+    if (!empName) return
+    const exists = saved.some(e => e.name === empName)
     if (exists && !confirm('Ya existe una empanada con ese nombre. ¿Desea sobrescribirla?')) {
       return
     }
     const payload: Empanada = {
-      name,
+      name: empName,
       costs: costs.map(item => ({
         ...item,
         cost: calculateCost(item),
@@ -277,6 +309,12 @@ export default function Home() {
       const list = await fetch('/api/empanadas').then(res => res.json())
       setSaved(list)
       toast.success('Empanada guardada', { style: { background: '#16a34a', color: '#fff' } })
+      const savedEmp = list.find(e => e.name === empName)
+      if (savedEmp) {
+        setLoadedEmpanada(savedEmp)
+        setName(empName)
+      }
+      setDirty(false)
     } catch {
       toast.error('Error al guardar', { style: { background: '#dc2626', color: '#fff' } })
     }
@@ -293,7 +331,22 @@ export default function Home() {
     })))
     setMargin(emp.margin)
     setShowTotals(false)
+    setLoadedEmpanada(emp)
+    setDirty(false)
     toast.success('Empanada cargada', { style: { background: '#16a34a', color: '#fff' } })
+  }
+
+  const requestNavigation = (action: { href?: string; emp?: Empanada }) => {
+    if (dirty) {
+      setPendingAction(action)
+      setShowExitModal(true)
+    } else {
+      if (action.href) router.push(action.href)
+      if (action.emp) {
+        loadEmpanada(action.emp)
+        setName(action.emp.name)
+      }
+    }
   }
 
   const total = costs.reduce((sum, item) => sum + calculateCost(item), 0)
@@ -317,7 +370,10 @@ export default function Home() {
           type="text"
           placeholder="Nombre de empanada"
           value={name}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            setName(e.target.value)
+            setDirty(true)
+          }}
           className="border rounded px-2 py-1"
         />
         <button onClick={saveEmpanada} className="ml-2 bg-green-600 text-white px-3 py-1 rounded">Guardar empanada</button>
@@ -337,7 +393,7 @@ export default function Home() {
         <button
           onClick={() => {
             const emp = saved.find(e => e.name === selected)
-            if (emp) loadEmpanada(emp)
+            if (emp) requestNavigation({ emp })
           }}
           className="ml-2 bg-green-600 text-white px-3 py-1 rounded"
         >
@@ -495,7 +551,10 @@ export default function Home() {
             type="number"
             value={margin}
             step="0.01"
-            onChange={e => setMargin(parseFloat(e.target.value))}
+            onChange={e => {
+              setMargin(parseFloat(e.target.value))
+              setDirty(true)
+            }}
           />
         </label>
       </div>
@@ -524,6 +583,51 @@ export default function Home() {
             setShowModal(false)
           }}
         />
+      )}
+
+      {showExitModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-4 rounded shadow-lg w-80">
+            <p className="mb-4">Tiene cambios sin guardar. ¿Qué desea hacer?</p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={async () => {
+                  await saveEmpanada()
+                  setShowExitModal(false)
+                  if (pendingAction?.href) router.push(pendingAction.href)
+                  if (pendingAction?.emp) {
+                    loadEmpanada(pendingAction.emp)
+                    setName(pendingAction.emp.name)
+                  }
+                  setPendingAction(null)
+                }}
+                className="bg-green-600 text-white px-3 py-1 rounded"
+              >
+                Actualizar
+              </button>
+              <button
+                onClick={async () => {
+                  const newName = prompt('Nombre para la nueva empanada', name)
+                  if (!newName) return
+                  await saveEmpanada(newName)
+                  setShowExitModal(false)
+                  if (pendingAction?.href) router.push(pendingAction.href)
+                  if (pendingAction?.emp) {
+                    loadEmpanada(pendingAction.emp)
+                    setName(pendingAction.emp.name)
+                  }
+                  setPendingAction(null)
+                }}
+                className="bg-blue-600 text-white px-3 py-1 rounded"
+              >
+                Guardar como nueva
+              </button>
+              <button onClick={() => { setShowExitModal(false); setPendingAction(null) }} className="px-3 py-1 rounded bg-gray-300">
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
     </div>
