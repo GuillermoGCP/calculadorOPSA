@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect, ChangeEvent } from 'react'
+import ProductEditModal from '../../components/ProductEditModal'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 
@@ -96,11 +97,20 @@ export default function Home() {
   const [selected, setSelected] = useState<string>('')
   const [products, setProducts] = useState<Product[]>([])
   const [newEntries, setNewEntries] = useState<Record<string, NewEntry>>({})
+  const [modalProduct, setModalProduct] = useState<Product | null>(null)
+  const [showModal, setShowModal] = useState<boolean>(false)
 
   const deleteItem = (id: string) => {
     if (confirm('¿Eliminar concepto?')) {
       setCosts(costs.filter(item => item.id !== id))
     }
+  }
+
+  const fetchProducts = () => {
+    fetch('/api/productos')
+      .then(res => res.json())
+      .then(list => setProducts(list))
+      .catch(() => {})
   }
 
   const searchParams = useSearchParams()
@@ -133,13 +143,6 @@ export default function Home() {
         }
       })
       .catch(() => {})
-
-    const fetchProducts = () => {
-      fetch('/api/productos')
-        .then(res => res.json())
-        .then(list => setProducts(list))
-        .catch(() => {})
-    }
 
     fetchProducts()
     window.addEventListener('focus', fetchProducts)
@@ -375,11 +378,13 @@ export default function Home() {
                   <td>
                     {item.vat}
                     <button
-                      onClick={() =>
-                        router.push(
-                          `/productos?edit=${encodeURIComponent(item.label)}&return=${encodeURIComponent(window.location.pathname + window.location.search)}`
-                        )
-                      }
+                      onClick={() => {
+                        const prod = products.find(p => p.name === item.label)
+                        if (prod) {
+                          setModalProduct(prod)
+                          setShowModal(true)
+                        }
+                      }}
                       className="ml-2 bg-blue-600 text-white px-2 py-1 rounded"
                     >
                       Editar
@@ -501,6 +506,17 @@ export default function Home() {
           <p>Precio de venta: {sellingPrice.toFixed(4)} €</p>
           <p>Beneficio: {profit.toFixed(4)} €</p>
         </div>
+      )}
+
+      {showModal && modalProduct && (
+        <ProductEditModal
+          product={modalProduct}
+          onClose={() => setShowModal(false)}
+          onSaved={() => {
+            fetchProducts()
+            setShowModal(false)
+          }}
+        />
       )}
 
     </div>
