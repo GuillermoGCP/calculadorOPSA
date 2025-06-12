@@ -1,6 +1,9 @@
-import XLSX from 'xlsx'
+import * as XLSX from 'xlsx'
 
-export function createWorkbookFromObjects(data: Record<string, any>[], sheetName = 'Sheet1') {
+export function createWorkbookFromObjects(
+  data: Record<string, any>[],
+  sheetName = 'Sheet1'
+) {
   const ws = XLSX.utils.json_to_sheet(data)
   const wb = XLSX.utils.book_new()
   XLSX.utils.book_append_sheet(wb, ws, sheetName)
@@ -9,7 +12,9 @@ export function createWorkbookFromObjects(data: Record<string, any>[], sheetName
 
 export function downloadWorkbook(wb: XLSX.WorkBook, fileName: string) {
   const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
-  const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+  const blob = new Blob([wbout], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
