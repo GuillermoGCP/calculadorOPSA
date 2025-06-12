@@ -79,7 +79,7 @@ export default function EmpanadasPage() {
           if (list.length === 0) return
           const wb = XLSX.utils.book_new()
           list.forEach((emp) => {
-            const rows = emp.costs.map((c) => ({
+            const rows: Record<string, any>[] = emp.costs.map((c) => ({
               Categoria: c.category,
               Concepto: c.label,
               Coste: c.cost,

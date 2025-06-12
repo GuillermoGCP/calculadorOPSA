@@ -522,7 +522,7 @@ export default function Home() {
       </button>
       <button
         onClick={() => {
-          const rows = costs.map(c => ({
+          const rows: Record<string, any>[] = costs.map(c => ({
             Categoria: c.category,
             Concepto: c.label,
             Cantidad: c.quantity,
