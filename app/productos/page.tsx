@@ -2,13 +2,13 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
+import {
+  DEFAULT_CATEGORIES,
+  getStoredCategories,
+  saveCategories,
+} from '../../lib/categories'
 
-type Category =
-  | 'Relleno'
-  | 'Masa'
-  | 'Horneado'
-  | 'Envasado y Etiquetado'
-  | 'Mano de obra'
+type Category = string
 
 type UnitType = 'kilo' | 'envase' | 'unidad' | 'metro'
 
@@ -20,24 +20,20 @@ interface Product {
   category?: Category
 }
 
-const categories: Category[] = [
-  'Relleno',
-  'Masa',
-  'Horneado',
-  'Envasado y Etiquetado',
-  'Mano de obra',
-]
 
 const emptyForm: Product = {
   name: '',
   unitType: 'kilo',
   price: 0,
   vat: 21,
-  category: 'Relleno',
+  category: DEFAULT_CATEGORIES[0],
 }
 
 export default function ProductosPage() {
   const [list, setList] = useState<Product[]>([])
+  const [categories, setCategories] = useState<string[]>(getStoredCategories())
+  const [newCategory, setNewCategory] = useState<string>('')
+  const [open, setOpen] = useState<Record<string, boolean>>({})
   const [form, setForm] = useState<Product>(emptyForm)
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -48,6 +44,17 @@ export default function ProductosPage() {
     const list = await fetch('/api/productos').then(res => res.json())
     setList(list)
   }
+
+  useEffect(() => {
+    setOpen(prev => {
+      const obj = { ...prev }
+      categories.forEach(cat => {
+        if (!(cat in obj)) obj[cat] = true
+      })
+      if (!('sin' in obj)) obj.sin = true
+      return obj
+    })
+  }, [categories])
 
   const editing = Boolean(searchParams.get('edit'))
 
@@ -109,6 +116,29 @@ export default function ProductosPage() {
         </button>
       )}
       <div className="flex flex-col gap-2 mb-4">
+        <div className="flex gap-2 items-end">
+          <label className="flex flex-col flex-grow">
+            Nueva categoría
+            <input
+              type="text"
+              value={newCategory}
+              onChange={e => setNewCategory(e.target.value)}
+              className="border rounded px-2 py-1"
+            />
+          </label>
+          <button
+            onClick={() => {
+              if (!newCategory) return
+              const cats = [...categories, newCategory]
+              setCategories(cats)
+              saveCategories(cats)
+              setNewCategory('')
+            }}
+            className="bg-blue-600 text-white px-2 py-1 rounded"
+          >
+            Añadir
+          </button>
+        </div>
         <label className="flex flex-col">
           Nombre
           <input
@@ -185,26 +215,34 @@ export default function ProductosPage() {
           {categories.map(cat => {
             const items = list.filter(p => p.category === cat)
             if (items.length === 0) return null
+            const isOpen = open[cat]
             return (
-              <div key={cat} className="mb-4">
-                <h2 className="font-semibold mb-2">{cat}</h2>
-                <ul className="divide-y">
-                  {items.map(prod => (
-                    <li key={prod.name} className="py-2 flex justify-between items-center">
-                      <span>
-                        {prod.name} - {prod.price}€/ {prod.unitType} - IVA {prod.vat}%
-                      </span>
-                      <span>
-                        <button className="text-blue-600 mr-2 hover:underline" onClick={() => setForm(prod)}>
-                          Editar
-                        </button>
-                        <button className="text-red-600 hover:underline" onClick={() => deleteProduct(prod.name)}>
-                          Eliminar
-                        </button>
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+              <div key={cat} className="mb-2 border rounded">
+                <button
+                  className="w-full text-left px-2 py-2 bg-gray-100 font-semibold"
+                  onClick={() => setOpen(o => ({ ...o, [cat]: !isOpen }))}
+                >
+                  {cat}
+                </button>
+                {isOpen && (
+                  <ul className="divide-y px-2 py-2">
+                    {items.map(prod => (
+                      <li key={prod.name} className="py-2 flex justify-between items-center">
+                        <span>
+                          {prod.name} - {prod.price}€/ {prod.unitType} - IVA {prod.vat}%
+                        </span>
+                        <span>
+                          <button className="text-blue-600 mr-2 hover:underline" onClick={() => setForm(prod)}>
+                            Editar
+                          </button>
+                          <button className="text-red-600 hover:underline" onClick={() => deleteProduct(prod.name)}>
+                            Eliminar
+                          </button>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             )
           })}
@@ -212,27 +250,34 @@ export default function ProductosPage() {
             <p>No hay productos guardados</p>
           )}
           {list.filter(p => !p.category || !categories.includes(p.category)).length > 0 && (
-            <div className="mb-4">
-              <h2 className="font-semibold mb-2">Sin categoría</h2>
-              <ul className="divide-y">
-                {list
-                  .filter(p => !p.category || !categories.includes(p.category))
-                  .map(prod => (
-                    <li key={prod.name} className="py-2 flex justify-between items-center">
-                      <span>
-                        {prod.name} - {prod.price}€/ {prod.unitType} - IVA {prod.vat}%
-                      </span>
-                      <span>
-                        <button className="text-blue-600 mr-2 hover:underline" onClick={() => setForm(prod)}>
-                          Editar
-                        </button>
-                        <button className="text-red-600 hover:underline" onClick={() => deleteProduct(prod.name)}>
-                          Eliminar
-                        </button>
-                      </span>
-                    </li>
-                  ))}
-              </ul>
+            <div className="mb-2 border rounded">
+              <button
+                className="w-full text-left px-2 py-2 bg-gray-100 font-semibold"
+                onClick={() => setOpen(o => ({ ...o, sin: !o.sin }))}
+              >
+                Sin categoría
+              </button>
+              {open.sin && (
+                <ul className="divide-y px-2 py-2">
+                  {list
+                    .filter(p => !p.category || !categories.includes(p.category))
+                    .map(prod => (
+                      <li key={prod.name} className="py-2 flex justify-between items-center">
+                        <span>
+                          {prod.name} - {prod.price}€/ {prod.unitType} - IVA {prod.vat}%
+                        </span>
+                        <span>
+                          <button className="text-blue-600 mr-2 hover:underline" onClick={() => setForm(prod)}>
+                            Editar
+                          </button>
+                          <button className="text-red-600 hover:underline" onClick={() => deleteProduct(prod.name)}>
+                            Eliminar
+                          </button>
+                        </span>
+                      </li>
+                    ))}
+                </ul>
+              )}
             </div>
           )}
         </>

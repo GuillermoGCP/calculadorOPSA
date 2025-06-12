@@ -1,13 +1,9 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
+import { getStoredCategories } from '../lib/categories'
 
-export type Category =
-  | 'Relleno'
-  | 'Masa'
-  | 'Horneado'
-  | 'Envasado y Etiquetado'
-  | 'Mano de obra'
+export type Category = string
 
 export type UnitType = 'kilo' | 'envase' | 'unidad' | 'metro'
 
@@ -19,22 +15,22 @@ export interface Product {
   category?: Category
 }
 
-const categories: Category[] = [
-  'Relleno',
-  'Masa',
-  'Horneado',
-  'Envasado y Etiquetado',
-  'Mano de obra',
-]
-
 interface Props {
   product: Product
   onClose: () => void
   onSaved: (updated: Product) => void
+  categories?: string[]
 }
 
-export default function ProductEditModal({ product, onClose, onSaved }: Props) {
+export default function ProductEditModal({ product, onClose, onSaved, categories: propCategories }: Props) {
   const [form, setForm] = useState<Product>(product)
+  const [categories, setCategories] = useState<string[]>(propCategories || [])
+
+  useEffect(() => {
+    if (!propCategories) {
+      setCategories(getStoredCategories())
+    }
+  }, [propCategories])
 
   const saveProduct = async () => {
     if (!form.name) return
