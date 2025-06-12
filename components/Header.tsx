@@ -30,7 +30,7 @@ export default function Header() {
           <>
             <button
               aria-label="Toggle navigation"
-              className="md:hidden"
+              className="md:hidden border border-white px-2 py-1 rounded hover:bg-white hover:text-green-600 transition"
               onClick={() => setMenuOpen(prev => !prev)}
             >
               Menu
