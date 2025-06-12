@@ -170,219 +170,227 @@ export default function ProductosPage() {
                 className='border rounded px-2 py-1'
               />
             </label>
-        <label className='flex flex-col'>
-          Tipo de unidad
-          <select
-            value={form.unitType}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                unitType: e.target.value as Product['unitType'],
-              })
-            }
-            className='border rounded px-2 py-1'
-          >
-            <option value='kilo'>kilo</option>
-            <option value='envase'>envase</option>
-            <option value='unidad'>unidad</option>
-            <option value='metro'>metro</option>
-            <option value='litro'>litro</option>
-          </select>
-        </label>
-        <label className='flex flex-col'>
-          Categoría
-          {hydrated && (
-            <select
-              value={form.category}
-              onChange={(e) => setForm({ ...form, category: e.target.value })}
-              className='border rounded px-2 py-1'
-            >
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
-          )}
-        </label>
-        <div className='flex gap-2 items-end'>
-          <label className='flex flex-col flex-grow'>
-            Nombre
-            <input
-              type='text'
-              value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
-              className='border rounded px-2 py-1'
-            />
-          </label>
-          <button
-            onClick={() => {
-              if (!newCategory) return
-              if (categories.includes(newCategory)) {
-                toast.error('La categoría ya existe', {
-                  style: { background: '#dc2626', color: '#fff' },
-                })
-                return
-              }
-              const cats = [...categories, newCategory]
-              setCategories(cats)
-              saveCategories(cats)
-              setNewCategory('')
-            }}
-            className='bg-blue-600 text-white px-2 py-1 rounded'
-          >
-            Añadir
-          </button>
-        </div>
-        <label className='flex flex-col'>
-          Precio (€/unidad)
-          <input
-            type='number'
-            step='0.0001'
-            placeholder='Precio'
-            value={form.price}
-            onChange={(e) =>
-              setForm({ ...form, price: parseFloat(e.target.value) })
-            }
-            className='border rounded px-2 py-1'
-          />
-        </label>
-        <label className='flex flex-col'>
-          IVA (%)
-          <input
-            type='number'
-            step='0.01'
-            placeholder='IVA'
-            value={form.vat}
-            onChange={(e) =>
-              setForm({ ...form, vat: parseFloat(e.target.value) })
-            }
-            className='border rounded px-2 py-1'
-          />
-        </label>
-        <div className='flex gap-2'>
-          {editingProduct && (
-            <button
-              onClick={() => {
-                setEditingProduct(null)
-                setForm(emptyForm)
-              }}
-              className='bg-gray-300 text-black py-2 rounded flex-1'
-            >
-              Cancelar
-            </button>
-          )}
-          <button
-            onClick={saveProduct}
-            className='bg-green-600 text-white py-2 rounded flex-1'
-          >
-            Guardar
-          </button>
-        </div>
-      </div>
+            <label className='flex flex-col'>
+              Tipo de unidad
+              <select
+                value={form.unitType}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    unitType: e.target.value as Product['unitType'],
+                  })
+                }
+                className='border rounded px-2 py-1'
+              >
+                <option value='kilo'>kilo</option>
+                <option value='envase'>envase</option>
+                <option value='unidad'>unidad</option>
+                <option value='metro'>metro</option>
+                <option value='litro'>litro</option>
+              </select>
+            </label>
+            <label className='flex flex-col'>
+              Categoría
+              {hydrated && (
+                <select
+                  value={form.category}
+                  onChange={(e) =>
+                    setForm({ ...form, category: e.target.value })
+                  }
+                  className='border rounded px-2 py-1'
+                >
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </label>
+            <div className='flex flex-col  gap-2 items-stretch lg:items-end'>
+              <label className='flex flex-col flex-grow'>
+                Crear nueva categoría
+                <input
+                  placeholder='Categoría'
+                  type='text'
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                  className='border rounded px-2 py-1'
+                />
+              </label>
+              <div className='flex lg:flex-col gap-2'>
+                <button
+                  onClick={() => {
+                    if (!newCategory) return
+                    if (categories.includes(newCategory)) {
+                      toast.error('La categoría ya existe', {
+                        style: { background: '#dc2626', color: '#fff' },
+                      })
+                      return
+                    }
+                    const cats = [...categories, newCategory]
+                    setCategories(cats)
+                    saveCategories(cats)
+                    setNewCategory('')
+                  }}
+                  className='bg-blue-600 text-white px-2 py-1 rounded'
+                >
+                  Añadir
+                </button>
+              </div>
+            </div>
+
+            <label className='flex flex-col'>
+              Precio (€/unidad)
+              <input
+                type='number'
+                step='0.0001'
+                placeholder='Precio'
+                value={form.price}
+                onChange={(e) =>
+                  setForm({ ...form, price: parseFloat(e.target.value) })
+                }
+                className='border rounded px-2 py-1'
+              />
+            </label>
+            <label className='flex flex-col'>
+              IVA (%)
+              <input
+                type='number'
+                step='0.01'
+                placeholder='IVA'
+                value={form.vat}
+                onChange={(e) =>
+                  setForm({ ...form, vat: parseFloat(e.target.value) })
+                }
+                className='border rounded px-2 py-1'
+              />
+            </label>
+            <div className='flex gap-2'>
+              {editingProduct && (
+                <button
+                  onClick={() => {
+                    setEditingProduct(null)
+                    setForm(emptyForm)
+                  }}
+                  className='bg-gray-300 text-black py-2 rounded flex-1'
+                >
+                  Cancelar
+                </button>
+              )}
+              <button
+                onClick={saveProduct}
+                className='bg-green-600 text-white py-2 rounded flex-1'
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
         </div>
         <div className='md:w-2/3'>
-      {!editingProduct && (
-        <>
-          {categories.map((cat) => {
-            const items = list.filter((p) => p.category === cat)
-            if (items.length === 0) return null
-            const isOpen = open[cat]
-            return (
-              <div key={cat} className='mb-2 border rounded'>
-                <button
-                  className='w-full text-left px-2 py-2 bg-gray-100 font-semibold'
-                  onClick={() => setOpen((o) => ({ ...o, [cat]: !isOpen }))}
-                >
-                  {cat}
-                </button>
-                {isOpen && (
-                  <ul className='divide-y px-2 py-2'>
-                    {items.map((prod) => (
-                      <li
-                        key={prod.name}
-                        className='py-2 flex justify-between items-center'
-                      >
-                        <span>
-                          {prod.name} - {prod.price}€/ {prod.unitType} - IVA{' '}
-                          {prod.vat}%
-                        </span>
-                        <span>
-                          <button
-                            className='text-blue-600 mr-2 hover:underline'
-                            onClick={() => {
-                              setForm(prod)
-                              setEditingProduct(prod.name)
-                            }}
+          {!editingProduct && (
+            <>
+              {categories.map((cat) => {
+                const items = list.filter((p) => p.category === cat)
+                if (items.length === 0) return null
+                const isOpen = open[cat]
+                return (
+                  <div key={cat} className='mb-2 border rounded'>
+                    <button
+                      className='w-full text-left px-2 py-2 bg-gray-100 font-semibold'
+                      onClick={() => setOpen((o) => ({ ...o, [cat]: !isOpen }))}
+                    >
+                      {cat}
+                    </button>
+                    {isOpen && (
+                      <ul className='divide-y px-2 py-2'>
+                        {items.map((prod) => (
+                          <li
+                            key={prod.name}
+                            className='py-2 flex justify-between items-center'
                           >
-                            Editar
-                          </button>
-                          <button
-                            className='text-red-600 hover:underline'
-                            onClick={() => deleteProduct(prod.name)}
+                            <span>
+                              {prod.name} - {prod.price}€/ {prod.unitType} - IVA{' '}
+                              {prod.vat}%
+                            </span>
+                            <span>
+                              <button
+                                className='text-blue-600 mr-2 hover:underline'
+                                onClick={() => {
+                                  setForm(prod)
+                                  setEditingProduct(prod.name)
+                                }}
+                              >
+                                Editar
+                              </button>
+                              <button
+                                className='text-red-600 hover:underline'
+                                onClick={() => deleteProduct(prod.name)}
+                              >
+                                Eliminar
+                              </button>
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )
+              })}
+              {list.filter(
+                (p) => !p.category || !categories.includes(p.category)
+              ).length === 0 &&
+                list.length === 0 && <p>No hay productos guardados</p>}
+              {list.filter(
+                (p) => !p.category || !categories.includes(p.category)
+              ).length > 0 && (
+                <div className='mb-2 border rounded'>
+                  <button
+                    className='w-full text-left px-2 py-2 bg-gray-100 font-semibold'
+                    onClick={() => setOpen((o) => ({ ...o, sin: !o.sin }))}
+                  >
+                    Sin categoría
+                  </button>
+                  {open.sin && (
+                    <ul className='divide-y px-2 py-2'>
+                      {list
+                        .filter(
+                          (p) => !p.category || !categories.includes(p.category)
+                        )
+                        .map((prod) => (
+                          <li
+                            key={prod.name}
+                            className='py-2 flex justify-between items-center'
                           >
-                            Eliminar
-                          </button>
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            )
-          })}
-          {list.filter((p) => !p.category || !categories.includes(p.category))
-            .length === 0 &&
-            list.length === 0 && <p>No hay productos guardados</p>}
-          {list.filter((p) => !p.category || !categories.includes(p.category))
-            .length > 0 && (
-            <div className='mb-2 border rounded'>
-              <button
-                className='w-full text-left px-2 py-2 bg-gray-100 font-semibold'
-                onClick={() => setOpen((o) => ({ ...o, sin: !o.sin }))}
-              >
-                Sin categoría
-              </button>
-              {open.sin && (
-                <ul className='divide-y px-2 py-2'>
-                  {list
-                    .filter(
-                      (p) => !p.category || !categories.includes(p.category)
-                    )
-                    .map((prod) => (
-                      <li
-                        key={prod.name}
-                        className='py-2 flex justify-between items-center'
-                      >
-                        <span>
-                          {prod.name} - {prod.price}€/ {prod.unitType} - IVA{' '}
-                          {prod.vat}%
-                        </span>
-                        <span>
-                          <button
-                            className='text-blue-600 mr-2 hover:underline'
-                            onClick={() => {
-                              setForm(prod)
-                              setEditingProduct(prod.name)
-                            }}
-                          >
-                            Editar
-                          </button>
-                          <button
-                            className='text-red-600 hover:underline'
-                            onClick={() => deleteProduct(prod.name)}
-                          >
-                            Eliminar
-                          </button>
-                        </span>
-                      </li>
-                    ))}
-                </ul>
+                            <span>
+                              {prod.name} - {prod.price}€/ {prod.unitType} - IVA{' '}
+                              {prod.vat}%
+                            </span>
+                            <span>
+                              <button
+                                className='text-blue-600 mr-2 hover:underline'
+                                onClick={() => {
+                                  setForm(prod)
+                                  setEditingProduct(prod.name)
+                                }}
+                              >
+                                Editar
+                              </button>
+                              <button
+                                className='text-red-600 hover:underline'
+                                onClick={() => deleteProduct(prod.name)}
+                              >
+                                Eliminar
+                              </button>
+                            </span>
+                          </li>
+                        ))}
+                    </ul>
+                  )}
+                </div>
               )}
-            </div>
+            </>
           )}
-        </>
-      )}
         </div>
       </div>
     </div>
