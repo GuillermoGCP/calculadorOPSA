@@ -36,6 +36,7 @@ export default function ProductosPage() {
   const [newCategory, setNewCategory] = useState<string>('')
   const [open, setOpen] = useState<Record<string, boolean>>({})
   const [form, setForm] = useState<Product>(emptyForm)
+  const [editingProduct, setEditingProduct] = useState<string | null>(null)
   const searchParams = useSearchParams()
   const router = useRouter()
   const returnParam = searchParams.get('return')
@@ -57,21 +58,25 @@ export default function ProductosPage() {
     })
   }, [categories])
 
-  const editing = Boolean(searchParams.get('edit'))
-
   useEffect(() => {
     fetchList().catch(() => {})
   }, [])
 
   useEffect(() => {
     const nameParam = searchParams.get('edit')
-    if (nameParam && list.length) {
-      const prod = list.find(p => p.name === nameParam)
+    if (nameParam) {
+      setEditingProduct(nameParam)
+    }
+  }, [searchParams])
+
+  useEffect(() => {
+    if (editingProduct && list.length) {
+      const prod = list.find(p => p.name === editingProduct)
       if (prod) {
         setForm(prod)
       }
     }
-  }, [searchParams, list])
+  }, [editingProduct, list])
 
   const saveProduct = async () => {
     if (!form.name) return
@@ -83,10 +88,11 @@ export default function ProductosPage() {
       })
       await fetchList()
       setForm(emptyForm)
+      setEditingProduct(null)
       toast.success('Producto guardado', {
         style: { background: '#16a34a', color: '#fff' },
       })
-      if (editing && returnParam) {
+      if (editingProduct && returnParam) {
         router.push(returnParam)
       }
     } catch {
@@ -133,9 +139,10 @@ export default function ProductosPage() {
           Regresar
         </button>
       )}
+      <h2 className="text-lg font-semibold mb-2">Nueva categoría</h2>
       <div className="flex gap-2 items-end mb-4">
         <label className="flex flex-col flex-grow">
-          Nueva categoría
+          Nombre
           <input
             type="text"
             value={newCategory}
@@ -156,6 +163,9 @@ export default function ProductosPage() {
           Añadir
         </button>
       </div>
+      <h2 className="text-lg font-semibold mb-2">
+        {editingProduct ? 'Editar producto' : 'Nuevo producto'}
+      </h2>
       <div className="flex flex-col gap-2 mb-4">
         <label className="flex flex-col">
           Nombre
@@ -225,11 +235,24 @@ export default function ProductosPage() {
             className="border rounded px-2 py-1"
           />
         </label>
-        <button onClick={saveProduct} className="bg-green-600 text-white py-2 rounded">
-          Guardar
-        </button>
+        <div className="flex gap-2">
+          {editingProduct && (
+            <button
+              onClick={() => {
+                setEditingProduct(null)
+                setForm(emptyForm)
+              }}
+              className="bg-gray-300 text-black py-2 rounded flex-1"
+            >
+              Cancelar
+            </button>
+          )}
+          <button onClick={saveProduct} className="bg-green-600 text-white py-2 rounded flex-1">
+            Guardar
+          </button>
+        </div>
       </div>
-      {!editing && (
+      {!editingProduct && (
         <>
           {categories.map(cat => {
             const items = list.filter(p => p.category === cat)
@@ -251,7 +274,13 @@ export default function ProductosPage() {
                           {prod.name} - {prod.price}€/ {prod.unitType} - IVA {prod.vat}%
                         </span>
                         <span>
-                          <button className="text-blue-600 mr-2 hover:underline" onClick={() => setForm(prod)}>
+                          <button
+                            className="text-blue-600 mr-2 hover:underline"
+                            onClick={() => {
+                              setForm(prod)
+                              setEditingProduct(prod.name)
+                            }}
+                          >
                             Editar
                           </button>
                           <button className="text-red-600 hover:underline" onClick={() => deleteProduct(prod.name)}>
@@ -286,7 +315,13 @@ export default function ProductosPage() {
                           {prod.name} - {prod.price}€/ {prod.unitType} - IVA {prod.vat}%
                         </span>
                         <span>
-                          <button className="text-blue-600 mr-2 hover:underline" onClick={() => setForm(prod)}>
+                          <button
+                            className="text-blue-600 mr-2 hover:underline"
+                            onClick={() => {
+                              setForm(prod)
+                              setEditingProduct(prod.name)
+                            }}
+                          >
                             Editar
                           </button>
                           <button className="text-red-600 hover:underline" onClick={() => deleteProduct(prod.name)}>
