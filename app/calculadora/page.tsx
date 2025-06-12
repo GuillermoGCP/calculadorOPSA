@@ -354,8 +354,10 @@ export default function Home() {
               <tr className="text-left border-b">
                 <th className="pb-1">Concepto</th>
                 <th className="pb-1">Cantidad</th>
-                <th className="pb-1">Costo (€)</th>
+                <th className="pb-1">Medida</th>
+                <th className="pb-1">Precio</th>
                 <th className="pb-1">IVA (%)</th>
+                <th className="pb-1">Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -372,11 +374,11 @@ export default function Home() {
                         handleQuantityChange(item.id, parseFloat(e.target.value))}
                       className="border rounded px-2 py-1 w-24"
                     />
-                    <span className="ml-2 text-sm">{item.unitType}</span>
                   </td>
-                  <td>{calculateCost(item).toFixed(4)}</td>
+                  <td>{item.unitType}</td>
+                  <td>{item.price.toFixed(4)}</td>
+                  <td>{item.vat}</td>
                   <td>
-                    {item.vat}
                     <button
                       onClick={() => {
                         const prod = products.find(p => p.name === item.label)
@@ -431,34 +433,37 @@ export default function Home() {
                       handleNewEntryChange(cat, 'quantity', parseFloat(e.target.value))}
                     className="border rounded px-2 py-1 w-24"
                   />
-                  <span className="ml-2 text-sm">{newEntries[cat]?.unitType}</span>
                 </td>
                 <td>
                   {newEntries[cat]?.productName ? (
-                    ((newEntries[cat].price || 0) * (newEntries[cat].quantity || 0)).toFixed(4)
+                    newEntries[cat].unitType
                   ) : (
-                    <>
-                      <input
-                        type="number"
-                        step="0.0001"
-                        placeholder="Precio"
-                        value={newEntries[cat]?.price || 0}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                          handleNewEntryChange(cat, 'price', parseFloat(e.target.value))}
-                        className="border rounded px-2 py-1 w-24"
-                      />
-                      <select
-                        value={newEntries[cat]?.unitType || 'kilo'}
-                        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                          handleNewEntryChange(cat, 'unitType', e.target.value as UnitType)}
-                        className="border rounded px-2 py-1 ml-2"
-                      >
-                        <option value="kilo">kilo</option>
-                        <option value="envase">envase</option>
-                        <option value="unidad">unidad</option>
-                        <option value="metro">metro</option>
-                      </select>
-                    </>
+                    <select
+                      value={newEntries[cat]?.unitType || 'kilo'}
+                      onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                        handleNewEntryChange(cat, 'unitType', e.target.value as UnitType)}
+                      className="border rounded px-2 py-1"
+                    >
+                      <option value="kilo">kilo</option>
+                      <option value="envase">envase</option>
+                      <option value="unidad">unidad</option>
+                      <option value="metro">metro</option>
+                    </select>
+                  )}
+                </td>
+                <td>
+                  {newEntries[cat]?.productName ? (
+                    newEntries[cat].price.toFixed(4)
+                  ) : (
+                    <input
+                      type="number"
+                      step="0.0001"
+                      placeholder="Precio"
+                      value={newEntries[cat]?.price || 0}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        handleNewEntryChange(cat, 'price', parseFloat(e.target.value))}
+                      className="border rounded px-2 py-1 w-24"
+                    />
                   )}
                 </td>
                 <td>
@@ -471,6 +476,8 @@ export default function Home() {
                       handleNewEntryChange(cat, 'vat', parseFloat(e.target.value))}
                     className="border rounded px-2 py-1 w-16"
                   />
+                </td>
+                <td>
                   <button onClick={() => addItem(cat)} className="ml-2 bg-green-600 text-white px-2 py-1 rounded">Añadir</button>
                 </td>
               </tr>
