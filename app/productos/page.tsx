@@ -168,6 +168,12 @@ export default function ProductosPage() {
         <button
           onClick={() => {
             if (!newCategory) return
+            if (categories.includes(newCategory)) {
+              toast.error('La categoría ya existe', {
+                style: { background: '#dc2626', color: '#fff' },
+              })
+              return
+            }
             const cats = [...categories, newCategory]
             setCategories(cats)
             saveCategories(cats)
