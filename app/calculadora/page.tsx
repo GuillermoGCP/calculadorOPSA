@@ -8,16 +8,7 @@ import { readEmpanadaFile } from '../../lib/importExcel'
 import ProductEditModal from '../../components/ProductEditModal'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
-
-interface CostItem {
-  id: string
-  category: string
-  label: string
-  price: number
-  quantity: number
-  vat: number
-  unitType: UnitType
-}
+import { CostItem, UnitType } from '../../types'
 
 interface Empanada {
   name: string
@@ -39,8 +30,6 @@ const ORDERED_CATEGORIES: Category[] = [
   'Envasado y Etiquetado',
   'Mano de obra',
 ]
-
-type UnitType = 'kilo' | 'envase' | 'unidad' | 'metro' | 'litro'
 
 interface Product {
   name: string

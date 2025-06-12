@@ -2,18 +2,7 @@ import { NextResponse } from 'next/server'
 import connectDB from '../../../lib/mongoose'
 import Empanada from '../../../models/Empanada'
 
-import { UnitType } from '../../../models/Product'
-
-interface CostItem {
-  id: string
-  category: string
-  label: string
-  price: number
-  quantity: number
-  unitType?: UnitType
-  cost: number
-  vat: number
-}
+import { UnitType, CostItem } from '../../../types'
 
 interface EmpanadaPayload {
   name: string

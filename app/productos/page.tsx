@@ -11,10 +11,9 @@ import {
   getStoredCategories,
   saveCategories,
 } from '../../lib/categories'
+import { UnitType } from '../../types'
 
 type Category = string
-
-type UnitType = 'kilo' | 'envase' | 'unidad' | 'metro' | 'litro'
 
 interface Product {
   name: string
