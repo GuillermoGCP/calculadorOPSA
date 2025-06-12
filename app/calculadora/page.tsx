@@ -198,7 +198,12 @@ export default function Home() {
       current.map(item => {
         const prod = products.find(p => p.name === item.label)
         if (prod) {
-          return { ...item, price: prod.price, unitType: prod.unitType }
+          return {
+            ...item,
+            price: prod.price,
+            unitType: prod.unitType,
+            vat: prod.vat,
+          }
         }
         return item
       })
