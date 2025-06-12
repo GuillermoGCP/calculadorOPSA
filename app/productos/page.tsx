@@ -157,36 +157,6 @@ export default function ProductosPage() {
 
       <div className='flex flex-col md:flex md:flex-row gap-4'>
         <div className='md:w-1/3'>
-          <h2 className='text-lg font-semibold mb-2'>Nueva categoría</h2>
-          <div className='flex gap-2 items-end mb-4'>
-            <label className='flex flex-col flex-grow'>
-              Nombre
-              <input
-                type='text'
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
-                className='border rounded px-2 py-1'
-              />
-            </label>
-            <button
-              onClick={() => {
-                if (!newCategory) return
-                if (categories.includes(newCategory)) {
-                  toast.error('La categoría ya existe', {
-                    style: { background: '#dc2626', color: '#fff' },
-                  })
-                  return
-                }
-                const cats = [...categories, newCategory]
-                setCategories(cats)
-                saveCategories(cats)
-                setNewCategory('')
-              }}
-              className='bg-blue-600 text-white px-2 py-1 rounded'
-            >
-              Añadir
-            </button>
-          </div>
           <h2 className='text-lg font-semibold mb-2'>
             {editingProduct ? 'Editar producto' : 'Nuevo producto'}
           </h2>
@@ -236,6 +206,35 @@ export default function ProductosPage() {
             </select>
           )}
         </label>
+        <div className='flex gap-2 items-end'>
+          <label className='flex flex-col flex-grow'>
+            Nombre
+            <input
+              type='text'
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              className='border rounded px-2 py-1'
+            />
+          </label>
+          <button
+            onClick={() => {
+              if (!newCategory) return
+              if (categories.includes(newCategory)) {
+                toast.error('La categoría ya existe', {
+                  style: { background: '#dc2626', color: '#fff' },
+                })
+                return
+              }
+              const cats = [...categories, newCategory]
+              setCategories(cats)
+              saveCategories(cats)
+              setNewCategory('')
+            }}
+            className='bg-blue-600 text-white px-2 py-1 rounded'
+          >
+            Añadir
+          </button>
+        </div>
         <label className='flex flex-col'>
           Precio (€/unidad)
           <input
