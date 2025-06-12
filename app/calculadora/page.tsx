@@ -10,6 +10,7 @@ interface CostItem {
   price: number
   quantity: number
   vat: number
+  unitType: UnitType
   isEditing?: boolean
 }
 
@@ -46,38 +47,46 @@ interface NewEntry {
 }
 
 const initialCosts = [
-  { id: 'carne', category: 'Relleno', label: 'Carne', price: 1.95, quantity: 1, vat: 10 },
-  { id: 'cebolla', category: 'Relleno', label: 'Cebolla', price: 0.8, quantity: 1, vat: 10 },
-  { id: 'azafran', category: 'Relleno', label: 'Azafrán', price: 0.025, quantity: 1, vat: 10 },
-  { id: 'sal_relleno', category: 'Relleno', label: 'Sal', price: 0.0048, quantity: 1, vat: 10 },
-  { id: 'azucar', category: 'Relleno', label: 'Azúcar', price: 0.012, quantity: 1, vat: 10 },
-  { id: 'aceite_relleno', category: 'Relleno', label: 'Aceite', price: 0.08, quantity: 1, vat: 10 },
-  { id: 'gas_cocina', category: 'Relleno', label: 'Gas cocina', price: 0.026, quantity: 1, vat: 10 },
+  { id: 'carne', category: 'Relleno', label: 'Carne', price: 1.95, quantity: 1, vat: 10, unitType: 'kilo' },
+  { id: 'cebolla', category: 'Relleno', label: 'Cebolla', price: 0.8, quantity: 1, vat: 10, unitType: 'kilo' },
+  { id: 'azafran', category: 'Relleno', label: 'Azafrán', price: 0.025, quantity: 1, vat: 10, unitType: 'kilo' },
+  { id: 'sal_relleno', category: 'Relleno', label: 'Sal', price: 0.0048, quantity: 1, vat: 10, unitType: 'kilo' },
+  { id: 'azucar', category: 'Relleno', label: 'Azúcar', price: 0.012, quantity: 1, vat: 10, unitType: 'kilo' },
+  { id: 'aceite_relleno', category: 'Relleno', label: 'Aceite', price: 0.08, quantity: 1, vat: 10, unitType: 'kilo' },
+  { id: 'gas_cocina', category: 'Relleno', label: 'Gas cocina', price: 0.026, quantity: 1, vat: 10, unitType: 'unidad' },
 
-  { id: 'harina', category: 'Masa', label: 'Harina', price: 0.112, quantity: 1, vat: 10 },
-  { id: 'aceite_masa', category: 'Masa', label: 'Aceite', price: 0.088, quantity: 1, vat: 10 },
-  { id: 'margarina', category: 'Masa', label: 'Margarina vegetal', price: 0.031, quantity: 1, vat: 10 },
-  { id: 'sal_masa', category: 'Masa', label: 'Sal', price: 0.0008, quantity: 1, vat: 10 },
-  { id: 'levadura', category: 'Masa', label: 'Levadura', price: 0.0088, quantity: 1, vat: 10 },
-  { id: 'electricidad_amasadora', category: 'Masa', label: 'Electricidad amasadora', price: 0.0358, quantity: 1, vat: 10 },
+  { id: 'harina', category: 'Masa', label: 'Harina', price: 0.112, quantity: 1, vat: 10, unitType: 'kilo' },
+  { id: 'aceite_masa', category: 'Masa', label: 'Aceite', price: 0.088, quantity: 1, vat: 10, unitType: 'kilo' },
+  { id: 'margarina', category: 'Masa', label: 'Margarina vegetal', price: 0.031, quantity: 1, vat: 10, unitType: 'kilo' },
+  { id: 'sal_masa', category: 'Masa', label: 'Sal', price: 0.0008, quantity: 1, vat: 10, unitType: 'kilo' },
+  { id: 'levadura', category: 'Masa', label: 'Levadura', price: 0.0088, quantity: 1, vat: 10, unitType: 'kilo' },
+  { id: 'electricidad_amasadora', category: 'Masa', label: 'Electricidad amasadora', price: 0.0358, quantity: 1, vat: 10, unitType: 'unidad' },
 
-  { id: 'bano_huevo', category: 'Horneado', label: 'Baño de huevo', price: 0.076, quantity: 1, vat: 10 },
-  { id: 'gas_horno', category: 'Horneado', label: 'Gas horno', price: 0.231, quantity: 1, vat: 10 },
+  { id: 'bano_huevo', category: 'Horneado', label: 'Baño de huevo', price: 0.076, quantity: 1, vat: 10, unitType: 'unidad' },
+  { id: 'gas_horno', category: 'Horneado', label: 'Gas horno', price: 0.231, quantity: 1, vat: 10, unitType: 'unidad' },
 
-  { id: 'papel_kraft', category: 'Envasado y Etiquetado', label: 'Papel kraft base', price: 0.11, quantity: 1, vat: 21 },
-  { id: 'bandeja_carton', category: 'Envasado y Etiquetado', label: 'Bandeja cartón', price: 0.09, quantity: 1, vat: 21 },
-  { id: 'sobre_papel', category: 'Envasado y Etiquetado', label: 'Sobre papel', price: 0.028, quantity: 1, vat: 21 },
-  { id: 'plastico_film', category: 'Envasado y Etiquetado', label: 'Plástico film', price: 0.0025, quantity: 1, vat: 21 },
-  { id: 'etiqueta_caja', category: 'Envasado y Etiquetado', label: 'Etiqueta caja', price: 0.034, quantity: 1, vat: 21 },
-  { id: 'folio_direccion', category: 'Envasado y Etiquetado', label: 'Folio etiqueta dirección', price: 0.0043, quantity: 1, vat: 21 },
-  { id: 'toner', category: 'Envasado y Etiquetado', label: 'Tóner impresora', price: 0.0234, quantity: 1, vat: 21 },
-  { id: 'cinta_adhesiva', category: 'Envasado y Etiquetado', label: 'Cinta adhesiva embalaje', price: 0.001, quantity: 1, vat: 21 },
+  { id: 'papel_kraft', category: 'Envasado y Etiquetado', label: 'Papel kraft base', price: 0.11, quantity: 1, vat: 21, unitType: 'unidad' },
+  { id: 'bandeja_carton', category: 'Envasado y Etiquetado', label: 'Bandeja cartón', price: 0.09, quantity: 1, vat: 21, unitType: 'unidad' },
+  { id: 'sobre_papel', category: 'Envasado y Etiquetado', label: 'Sobre papel', price: 0.028, quantity: 1, vat: 21, unitType: 'unidad' },
+  { id: 'plastico_film', category: 'Envasado y Etiquetado', label: 'Plástico film', price: 0.0025, quantity: 1, vat: 21, unitType: 'metro' },
+  { id: 'etiqueta_caja', category: 'Envasado y Etiquetado', label: 'Etiqueta caja', price: 0.034, quantity: 1, vat: 21, unitType: 'unidad' },
+  { id: 'folio_direccion', category: 'Envasado y Etiquetado', label: 'Folio etiqueta dirección', price: 0.0043, quantity: 1, vat: 21, unitType: 'unidad' },
+  { id: 'toner', category: 'Envasado y Etiquetado', label: 'Tóner impresora', price: 0.0234, quantity: 1, vat: 21, unitType: 'unidad' },
+  { id: 'cinta_adhesiva', category: 'Envasado y Etiquetado', label: 'Cinta adhesiva embalaje', price: 0.001, quantity: 1, vat: 21, unitType: 'unidad' },
 
-  { id: 'mano_de_obra', category: 'Mano de obra', label: 'Mano de obra', price: 0.72, quantity: 1, vat: 21 }
+  { id: 'mano_de_obra', category: 'Mano de obra', label: 'Mano de obra', price: 0.72, quantity: 1, vat: 21, unitType: 'unidad' }
 ]
 
 const defaultVatForCategory = (category: string) =>
   ['Relleno', 'Masa', 'Horneado'].includes(category) ? 10 : 21
+
+const calculateCost = (item: CostItem) => {
+  const qty =
+    item.unitType === 'envase' || item.unitType === 'unidad'
+      ? Math.round(item.quantity)
+      : item.quantity
+  return item.price * qty
+}
 
 export default function Home() {
   const [costs, setCosts] = useState<CostItem[]>(initialCosts.map(c => ({ ...c, isEditing: false })))
@@ -114,14 +123,27 @@ export default function Home() {
       })
       .catch(() => {})
 
-    fetch('/api/productos')
-      .then(res => res.json())
-      .then(list => setProducts(list))
-      .catch(() => {})
+    const fetchProducts = () => {
+      fetch('/api/productos')
+        .then(res => res.json())
+        .then(list => setProducts(list))
+        .catch(() => {})
+    }
+
+    fetchProducts()
+    window.addEventListener('focus', fetchProducts)
+    return () => window.removeEventListener('focus', fetchProducts)
   }, [])
 
   const handleQuantityChange = (id: string, value: number) => {
-    setCosts(costs.map(item => item.id === id ? { ...item, quantity: value } : item))
+    setCosts(costs.map(item => {
+      if (item.id !== id) return item
+      const qty =
+        item.unitType === 'envase' || item.unitType === 'unidad'
+          ? Math.round(value)
+          : value
+      return { ...item, quantity: qty }
+    }))
   }
 
   const handleLabelChange = (id: string, value: string) => {
@@ -135,6 +157,18 @@ export default function Home() {
   const toggleEdit = (id: string) => {
     setCosts(costs.map(item => item.id === id ? { ...item, isEditing: !item.isEditing } : item))
   }
+
+  useEffect(() => {
+    setCosts(current =>
+      current.map(item => {
+        const prod = products.find(p => p.name === item.label)
+        if (prod) {
+          return { ...item, price: prod.price, unitType: prod.unitType }
+        }
+        return item
+      })
+    )
+  }, [products])
 
   const handleNewEntryChange = (
     category: string,
@@ -186,6 +220,7 @@ export default function Home() {
       label: entry.name,
       price: entry.price,
       quantity: entry.quantity,
+      unitType: entry.unitType,
       vat: entry.vat ?? defaultVatForCategory(category),
       isEditing: false,
     }
@@ -225,9 +260,9 @@ export default function Home() {
     }
     const payload: Empanada = {
       name,
-      costs: costs.map(({ isEditing, price, quantity, ...rest }) => ({
+      costs: costs.map(({ isEditing, ...rest }) => ({
         ...rest,
-        cost: price * quantity,
+        cost: calculateCost(rest),
       })),
       margin,
     }
@@ -260,9 +295,9 @@ export default function Home() {
     toast.success('Empanada cargada', { style: { background: '#16a34a', color: '#fff' } })
   }
 
-  const total = costs.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const total = costs.reduce((sum, item) => sum + calculateCost(item), 0)
   const vatTotal = costs.reduce(
-    (sum, item) => sum + item.price * item.quantity * (item.vat || 0) / 100,
+    (sum, item) => sum + calculateCost(item) * (item.vat || 0) / 100,
     0
   )
   const totalWithVat = total + vatTotal
@@ -313,6 +348,7 @@ export default function Home() {
             <thead>
               <tr className="text-left border-b">
                 <th className="pb-1">Concepto</th>
+                <th className="pb-1">Cantidad</th>
                 <th className="pb-1">Costo (€)</th>
                 <th className="pb-1">IVA (%)</th>
               </tr>
@@ -334,21 +370,16 @@ export default function Home() {
                     )}
                   </td>
                   <td>
-                    {item.isEditing ? (
-                      <>
-                        <input
-                          type="number"
-                          value={item.quantity}
-                          step="0.0001"
-                          onChange={e => handleQuantityChange(item.id, parseFloat(e.target.value))}
-                          className="border rounded px-2 py-1 w-24"
-                        />
-                        <span className="ml-2">{(item.price * item.quantity).toFixed(4)}</span>
-                      </>
-                    ) : (
-                      (item.price * item.quantity).toFixed(4)
-                    )}
+                    <input
+                      type="number"
+                      value={item.quantity}
+                      step={item.unitType === 'envase' || item.unitType === 'unidad' ? 1 : 0.0001}
+                      onChange={e => handleQuantityChange(item.id, parseFloat(e.target.value))}
+                      className="border rounded px-2 py-1 w-24"
+                    />
+                    <span className="ml-2 text-sm">{item.unitType}</span>
                   </td>
+                  <td>{calculateCost(item).toFixed(4)}</td>
                   <td>
                     {item.isEditing ? (
                       <>
@@ -367,7 +398,7 @@ export default function Home() {
                         <button
                           onClick={() =>
                             router.push(
-                              `/productos?edit=${encodeURIComponent(item.label)}`
+                              `/productos?edit=${encodeURIComponent(item.label)}&return=${encodeURIComponent(window.location.pathname + window.location.search)}`
                             )
                           }
                           className="ml-2 bg-blue-600 text-white px-2 py-1 rounded"
@@ -407,18 +438,19 @@ export default function Home() {
                   )}
                 </td>
                 <td>
+                  <input
+                    type="number"
+                    step={newEntries[cat]?.unitType === 'envase' || newEntries[cat]?.unitType === 'unidad' ? 1 : 0.0001}
+                    placeholder="Cantidad"
+                    value={newEntries[cat]?.quantity || 0}
+                    onChange={e => handleNewEntryChange(cat, 'quantity', parseFloat(e.target.value))}
+                    className="border rounded px-2 py-1 w-24"
+                  />
+                  <span className="ml-2 text-sm">{newEntries[cat]?.unitType}</span>
+                </td>
+                <td>
                   {newEntries[cat]?.productName ? (
-                    <>
-                      <input
-                        type="number"
-                        step="0.0001"
-                        placeholder="Cantidad"
-                        value={newEntries[cat]?.quantity || 0}
-                        onChange={e => handleNewEntryChange(cat, 'quantity', parseFloat(e.target.value))}
-                        className="border rounded px-2 py-1 w-24"
-                      />
-                      <span className="ml-2 text-sm">{newEntries[cat]?.unitType}</span>
-                    </>
+                    ((newEntries[cat].price || 0) * (newEntries[cat].quantity || 0)).toFixed(4)
                   ) : (
                     <>
                       <input
@@ -428,14 +460,6 @@ export default function Home() {
                         value={newEntries[cat]?.price || 0}
                         onChange={e => handleNewEntryChange(cat, 'price', parseFloat(e.target.value))}
                         className="border rounded px-2 py-1 w-24"
-                      />
-                      <input
-                        type="number"
-                        step="0.0001"
-                        placeholder="Cantidad"
-                        value={newEntries[cat]?.quantity || 0}
-                        onChange={e => handleNewEntryChange(cat, 'quantity', parseFloat(e.target.value))}
-                        className="border rounded px-2 py-1 w-24 ml-2"
                       />
                       <select
                         value={newEntries[cat]?.unitType || 'kilo'}
@@ -459,13 +483,6 @@ export default function Home() {
                     onChange={e => handleNewEntryChange(cat, 'vat', parseFloat(e.target.value))}
                     className="border rounded px-2 py-1 w-16"
                   />
-                  {newEntries[cat]?.productName && (
-                    <span className="ml-2 text-sm">
-                      Coste:{' '}
-                      {((newEntries[cat].price || 0) * (newEntries[cat].quantity || 0)).toFixed(4)}
-                      €
-                    </span>
-                  )}
                   <button onClick={() => addItem(cat)} className="ml-2 bg-green-600 text-white px-2 py-1 rounded">Añadir</button>
                 </td>
               </tr>
