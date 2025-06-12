@@ -29,7 +29,7 @@ describe('ProductosPage category addition', () => {
   it('prevents duplicate categories', async () => {
     const user = userEvent.setup()
     render(<ProductosPage />)
-    const input = screen.getAllByLabelText('Nombre')[0]
+    const input = screen.getAllByLabelText('Nombre')[1]
     await user.type(input, 'Relleno')
     const button = screen.getByRole('button', { name: 'Añadir' })
     const select = screen.getByLabelText('Categoría') as HTMLSelectElement
