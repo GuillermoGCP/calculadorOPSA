@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from 'react'
+import { useState, useEffect, ChangeEvent } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 
@@ -117,7 +117,19 @@ export default function Home() {
           if (emp) {
             loadEmpanada(emp)
             setName(emp.name)
+            return
           }
+        }
+        if (list.length > 0) {
+          loadEmpanada(list[0])
+          setName(list[0].name)
+          toast.info('Se cargó la primera empanada guardada', {
+            style: { background: '#16a34a', color: '#fff' },
+          })
+        } else {
+          toast.info('No hay empanadas guardadas. Usando valores por defecto', {
+            style: { background: '#2563eb', color: '#fff' },
+          })
         }
       })
       .catch(() => {})
@@ -302,14 +314,18 @@ export default function Home() {
           type="text"
           placeholder="Nombre de empanada"
           value={name}
-          onChange={e => setName(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
           className="border rounded px-2 py-1"
         />
         <button onClick={saveEmpanada} className="ml-2 bg-green-600 text-white px-3 py-1 rounded">Guardar empanada</button>
       </div>
 
       <div className="mb-4">
-        <select value={selected} onChange={e => setSelected(e.target.value)} className="border rounded px-2 py-1">
+        <select
+          value={selected}
+          onChange={(e: ChangeEvent<HTMLSelectElement>) => setSelected(e.target.value)}
+          className="border rounded px-2 py-1"
+        >
           <option value="">Cargar empanada...</option>
           {saved.map(emp => (
             <option key={emp.name} value={emp.name}>{emp.name}</option>
@@ -349,7 +365,8 @@ export default function Home() {
                       type="number"
                       value={item.quantity}
                       step={item.unitType === 'envase' || item.unitType === 'unidad' ? 1 : 0.0001}
-                      onChange={e => handleQuantityChange(item.id, parseFloat(e.target.value))}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        handleQuantityChange(item.id, parseFloat(e.target.value))}
                       className="border rounded px-2 py-1 w-24"
                     />
                     <span className="ml-2 text-sm">{item.unitType}</span>
@@ -375,7 +392,8 @@ export default function Home() {
                 <td className="align-top">
                   <select
                     value={newEntries[cat]?.productName || ''}
-                    onChange={e => handleProductSelect(cat, e.target.value)}
+                    onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                      handleProductSelect(cat, e.target.value)}
                     className="border rounded px-2 py-1 mr-2"
                   >
                     <option value="">Nuevo producto...</option>
@@ -392,7 +410,8 @@ export default function Home() {
                       type="text"
                       placeholder="Nombre"
                       value={newEntries[cat]?.name || ''}
-                      onChange={e => handleNewEntryChange(cat, 'name', e.target.value)}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        handleNewEntryChange(cat, 'name', e.target.value)}
                       className="border rounded px-2 py-1"
                     />
                   )}
@@ -403,7 +422,8 @@ export default function Home() {
                     step={newEntries[cat]?.unitType === 'envase' || newEntries[cat]?.unitType === 'unidad' ? 1 : 0.0001}
                     placeholder="Cantidad"
                     value={newEntries[cat]?.quantity || 0}
-                    onChange={e => handleNewEntryChange(cat, 'quantity', parseFloat(e.target.value))}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      handleNewEntryChange(cat, 'quantity', parseFloat(e.target.value))}
                     className="border rounded px-2 py-1 w-24"
                   />
                   <span className="ml-2 text-sm">{newEntries[cat]?.unitType}</span>
@@ -418,12 +438,14 @@ export default function Home() {
                         step="0.0001"
                         placeholder="Precio"
                         value={newEntries[cat]?.price || 0}
-                        onChange={e => handleNewEntryChange(cat, 'price', parseFloat(e.target.value))}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          handleNewEntryChange(cat, 'price', parseFloat(e.target.value))}
                         className="border rounded px-2 py-1 w-24"
                       />
                       <select
                         value={newEntries[cat]?.unitType || 'kilo'}
-                        onChange={e => handleNewEntryChange(cat, 'unitType', e.target.value as any)}
+                        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                          handleNewEntryChange(cat, 'unitType', e.target.value as UnitType)}
                         className="border rounded px-2 py-1 ml-2"
                       >
                         <option value="kilo">kilo</option>
@@ -440,7 +462,8 @@ export default function Home() {
                     step="0.01"
                     placeholder="IVA"
                     value={newEntries[cat]?.vat ?? defaultVatForCategory(cat)}
-                    onChange={e => handleNewEntryChange(cat, 'vat', parseFloat(e.target.value))}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      handleNewEntryChange(cat, 'vat', parseFloat(e.target.value))}
                     className="border rounded px-2 py-1 w-16"
                   />
                   <button onClick={() => addItem(cat)} className="ml-2 bg-green-600 text-white px-2 py-1 rounded">Añadir</button>
