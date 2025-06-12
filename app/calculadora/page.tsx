@@ -307,7 +307,7 @@ export default function Home() {
   return (
 
     <div className="p-6 mt-6 font-sans max-w-screen-lg mx-auto bg-white rounded-lg shadow-lg">
-      <h1 className="text-2xl font-bold mb-4">Calculadora de Costes de Empanadas</h1>
+      <h1 className="text-2xl font-bold mb-4">{name && `${name} - `}Calculadora de Costes de Empanadas</h1>
 
       <div className="mb-4">
         <input
