@@ -41,7 +41,8 @@ export default function ProductosPage() {
   const [form, setForm] = useState<Product>(emptyForm)
   const searchParams = useSearchParams()
   const router = useRouter()
-  const returnUrl = searchParams.get('return') || '/calculadora'
+  const returnParam = searchParams.get('return')
+  const returnUrl = returnParam || '/calculadora'
 
   const fetchList = async () => {
     const list = await fetch('/api/productos').then(res => res.json())
@@ -77,6 +78,9 @@ export default function ProductosPage() {
       toast.success('Producto guardado', {
         style: { background: '#16a34a', color: '#fff' },
       })
+      if (editing && returnParam) {
+        router.push(returnParam)
+      }
     } catch {
       toast.error('Error al guardar', { style: { background: '#dc2626', color: '#fff' } })
     }
