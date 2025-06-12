@@ -7,6 +7,7 @@ export enum UnitType {
   Envase = 'envase',
   Unidad = 'unidad',
   Metro = 'metro',
+  Litro = 'litro',
 }
 
 export interface IProduct extends Document {
