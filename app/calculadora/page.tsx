@@ -35,7 +35,7 @@ const ORDERED_CATEGORIES: Category[] = [
   'Mano de obra',
 ]
 
-type UnitType = 'kilo' | 'envase' | 'unidad' | 'metro'
+type UnitType = 'kilo' | 'envase' | 'unidad' | 'metro' | 'litro'
 
 interface Product {
   name: string

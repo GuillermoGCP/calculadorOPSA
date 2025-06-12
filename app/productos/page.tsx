@@ -10,7 +10,7 @@ import {
 
 type Category = string
 
-type UnitType = 'kilo' | 'envase' | 'unidad' | 'metro'
+type UnitType = 'kilo' | 'envase' | 'unidad' | 'metro' | 'litro'
 
 interface Product {
   name: string
@@ -162,6 +162,7 @@ export default function ProductosPage() {
             <option value="envase">envase</option>
             <option value="unidad">unidad</option>
             <option value="metro">metro</option>
+            <option value="litro">litro</option>
           </select>
         </label>
         <label className="flex flex-col">

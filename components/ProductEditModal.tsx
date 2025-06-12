@@ -5,7 +5,7 @@ import { getStoredCategories } from '../lib/categories'
 
 export type Category = string
 
-export type UnitType = 'kilo' | 'envase' | 'unidad' | 'metro'
+export type UnitType = 'kilo' | 'envase' | 'unidad' | 'metro' | 'litro'
 
 export interface Product {
   name: string
@@ -79,6 +79,7 @@ export default function ProductEditModal({ product, onClose, onSaved, categories
               <option value="envase">envase</option>
               <option value="unidad">unidad</option>
               <option value="metro">metro</option>
+              <option value="litro">litro</option>
             </select>
           </label>
           <label className="flex flex-col">
