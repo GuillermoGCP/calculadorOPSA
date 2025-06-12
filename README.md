@@ -21,6 +21,14 @@ En la interfaz se pueden editar individualmente los costes y también el nombre 
 
 Las empanadas guardadas se muestran en una lista desplegable desde donde se pueden precargar para realizar ajustes y, tras pulsar **Obtener gastos y beneficios**, consultar los totales (IVA incluido) y el beneficio según el margen indicado.
 
+## Exportación a Excel
+
+Se ha añadido soporte para descargar los datos en formato `.xlsx`:
+
+* En la calculadora encontrarás el botón **Descargar empanada** que genera una hoja con todos los conceptos, totales y beneficios de la empanada actual.
+* En la página **Empanadas guardadas** puedes exportar todas las empanadas, cada una en su propia pestaña del libro.
+* Desde **Productos** es posible obtener un listado completo de productos en Excel.
+
 ## Uso de Tailwind CSS
 
 Este proyecto utiliza la CDN de Tailwind de forma predeterminada, tal como se incluye en `app/layout.js`.

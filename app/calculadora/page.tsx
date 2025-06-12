@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect, ChangeEvent } from 'react'
+import { createWorkbookFromObjects, downloadWorkbook } from '../../lib/exportExcel'
 import ProductEditModal from '../../components/ProductEditModal'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
@@ -518,6 +519,31 @@ export default function Home() {
 
       <button onClick={() => setShowTotals(true)} className="mt-4 bg-green-700 text-white px-4 py-2 rounded">
         Obtener gastos y beneficios
+      </button>
+      <button
+        onClick={() => {
+          const rows = costs.map(c => ({
+            Categoria: c.category,
+            Concepto: c.label,
+            Cantidad: c.quantity,
+            Medida: c.unitType,
+            Precio: c.price,
+            Coste: calculateCost(c),
+            IVA: c.vat,
+          }))
+          rows.push({})
+          rows.push({ Concepto: 'Total', Coste: total })
+          rows.push({ Concepto: 'IVA total', Coste: vatTotal })
+          rows.push({ Concepto: 'Total con IVA', Coste: totalWithVat })
+          rows.push({ Concepto: 'Margen (%)', Coste: margin })
+          rows.push({ Concepto: 'Precio de venta', Coste: sellingPrice })
+          rows.push({ Concepto: 'Beneficio', Coste: profit })
+          const wb = createWorkbookFromObjects(rows, name || 'Empanada')
+          downloadWorkbook(wb, (name || 'empanada') + '.xlsx')
+        }}
+        className="mt-4 ml-2 bg-blue-700 text-white px-4 py-2 rounded"
+      >
+        Descargar empanada
       </button>
 
       {showTotals && (
