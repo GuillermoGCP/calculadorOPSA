@@ -11,7 +11,6 @@ interface CostItem {
   quantity: number
   vat: number
   unitType: UnitType
-  isEditing?: boolean
 }
 
 interface Empanada {
@@ -89,7 +88,7 @@ const calculateCost = (item: CostItem) => {
 }
 
 export default function Home() {
-  const [costs, setCosts] = useState<CostItem[]>(initialCosts.map(c => ({ ...c, isEditing: false })))
+  const [costs, setCosts] = useState<CostItem[]>(initialCosts)
   const [margin, setMargin] = useState<number>(0)
   const [showTotals, setShowTotals] = useState<boolean>(false)
   const [name, setName] = useState<string>('')
@@ -146,17 +145,6 @@ export default function Home() {
     }))
   }
 
-  const handleLabelChange = (id: string, value: string) => {
-    setCosts(costs.map(item => item.id === id ? { ...item, label: value } : item))
-  }
-
-  const handleVatChange = (id: string, value: number) => {
-    setCosts(costs.map(item => item.id === id ? { ...item, vat: value } : item))
-  }
-
-  const toggleEdit = (id: string) => {
-    setCosts(costs.map(item => item.id === id ? { ...item, isEditing: !item.isEditing } : item))
-  }
 
   useEffect(() => {
     setCosts(current =>
@@ -222,7 +210,6 @@ export default function Home() {
       quantity: entry.quantity,
       unitType: entry.unitType,
       vat: entry.vat ?? defaultVatForCategory(category),
-      isEditing: false,
     }
     if (!entry.productName) {
       fetch('/api/productos', {
@@ -260,9 +247,9 @@ export default function Home() {
     }
     const payload: Empanada = {
       name,
-      costs: costs.map(({ isEditing, ...rest }) => ({
-        ...rest,
-        cost: calculateCost(rest),
+      costs: costs.map(item => ({
+        ...item,
+        cost: calculateCost(item),
       })),
       margin,
     }
@@ -288,7 +275,6 @@ export default function Home() {
       price: c.cost,
       quantity: 1,
       vat: c.vat,
-      isEditing: false
     })))
     setMargin(emp.margin)
     setShowTotals(false)
@@ -357,18 +343,7 @@ export default function Home() {
               {costs.filter(c => c.category === cat).map(item => (
 
                 <tr key={item.id}>
-                  <td>
-                    {item.isEditing ? (
-                      <input
-                        type="text"
-                        value={item.label}
-                        onChange={e => handleLabelChange(item.id, e.target.value)}
-                        className="border rounded px-2 py-1"
-                      />
-                    ) : (
-                      item.label
-                    )}
-                  </td>
+                  <td>{item.label}</td>
                   <td>
                     <input
                       type="number"
@@ -381,33 +356,18 @@ export default function Home() {
                   </td>
                   <td>{calculateCost(item).toFixed(4)}</td>
                   <td>
-                    {item.isEditing ? (
-                      <>
-                        <input
-                          type="number"
-                          value={item.vat}
-                          step="0.01"
-                          onChange={e => handleVatChange(item.id, parseFloat(e.target.value))}
-                          className="border rounded px-2 py-1 w-16"
-                        />
-                        <button onClick={() => toggleEdit(item.id)} className="ml-2 bg-blue-600 text-white px-2 py-1 rounded">Guardar</button>
-                      </>
-                    ) : (
-                      <>
-                        {item.vat}
-                        <button
-                          onClick={() =>
-                            router.push(
-                              `/productos?edit=${encodeURIComponent(item.label)}&return=${encodeURIComponent(window.location.pathname + window.location.search)}`
-                            )
-                          }
-                          className="ml-2 bg-blue-600 text-white px-2 py-1 rounded"
-                        >
-                          Editar
-                        </button>
-                        <button onClick={() => deleteItem(item.id)} className="ml-2 bg-red-600 text-white px-2 py-1 rounded">Borrar</button>
-                      </>
-                    )}
+                    {item.vat}
+                    <button
+                      onClick={() =>
+                        router.push(
+                          `/productos?edit=${encodeURIComponent(item.label)}&return=${encodeURIComponent(window.location.pathname + window.location.search)}`
+                        )
+                      }
+                      className="ml-2 bg-blue-600 text-white px-2 py-1 rounded"
+                    >
+                      Editar
+                    </button>
+                    <button onClick={() => deleteItem(item.id)} className="ml-2 bg-red-600 text-white px-2 py-1 rounded">Borrar</button>
                   </td>
                 </tr>
               ))}
