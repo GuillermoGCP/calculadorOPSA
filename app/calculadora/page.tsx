@@ -1,6 +1,7 @@
 "use client"
-import { useState, useEffect, ChangeEvent } from 'react'
+import { useState, useEffect, ChangeEvent, useRef } from 'react'
 import { createWorkbookFromObjects, downloadWorkbook } from '../../lib/exportExcel'
+import { readEmpanadaFile } from '../../lib/importExcel'
 import ProductEditModal from '../../components/ProductEditModal'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
@@ -108,6 +109,7 @@ export default function Home() {
   const [loadedEmpanada, setLoadedEmpanada] = useState<Empanada | null>(null)
   const [pendingAction, setPendingAction] = useState<{ href?: string; emp?: Empanada } | null>(null)
   const [showExitModal, setShowExitModal] = useState<boolean>(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const deleteItem = (id: string) => {
     if (confirm('¿Eliminar concepto?')) {
@@ -250,6 +252,33 @@ export default function Home() {
     }))
   }
 
+  const handleExcelUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    try {
+      const imported = await readEmpanadaFile(file)
+      const mapped: CostItem[] = imported.costs.map(c => ({
+        id: `${c.label.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}`,
+        category: c.category as Category,
+        label: c.label,
+        price: c.price,
+        quantity: c.quantity,
+        unitType: c.unitType as UnitType,
+        vat: c.vat,
+      }))
+      setCosts(mapped)
+      setMargin(imported.margin)
+      setName(imported.name)
+      setLoadedEmpanada(null)
+      setShowTotals(false)
+      setDirty(true)
+      toast.success('Empanada cargada desde Excel', { style: { background: '#16a34a', color: '#fff' } })
+    } catch {
+      toast.error('Error al leer el archivo', { style: { background: '#dc2626', color: '#fff' } })
+    }
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
   const saveEmpanada = async (overrideName?: string, skipConfirm?: boolean) => {
     const empName = overrideName ?? name
     if (!empName) return
@@ -374,6 +403,19 @@ export default function Home() {
           className="ml-2 bg-green-600 text-white px-3 py-1 rounded"
         >
           Cargar
+        </button>
+        <input
+          type="file"
+          accept=".xlsx"
+          ref={fileInputRef}
+          onChange={handleExcelUpload}
+          className="hidden"
+        />
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className="ml-2 bg-purple-700 text-white px-3 py-1 rounded"
+        >
+          Cargar desde Excel
         </button>
       </div>
 
