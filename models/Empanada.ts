@@ -1,9 +1,14 @@
 import mongoose, { Schema, Document, Model } from 'mongoose'
 
+import { UnitType } from './Product'
+
 interface CostItem {
   id: string
   category: string
   label: string
+  price: number
+  quantity: number
+  unitType?: UnitType
   cost: number
   vat: number
 }
@@ -19,6 +24,9 @@ const CostItemSchema = new Schema<CostItem>(
     id: String,
     category: String,
     label: String,
+    price: Number,
+    quantity: Number,
+    unitType: { type: String, enum: Object.values(UnitType), required: false },
     cost: Number,
     vat: Number,
   },

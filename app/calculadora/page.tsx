@@ -284,8 +284,9 @@ export default function Home() {
       id: c.id,
       category: c.category,
       label: c.label,
-      price: c.cost,
-      quantity: 1,
+      price: c.price ?? c.cost,
+      quantity: c.quantity ?? 1,
+      unitType: c.unitType ?? 'unidad',
       vat: c.vat,
     })))
     setMargin(emp.margin)
