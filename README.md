@@ -31,7 +31,9 @@ Se ha añadido soporte para descargar los datos en formato `.xlsx`:
 
 ## Estilos CSS
 
-Ahora la aplicación utiliza hojas de estilo clásicas. Todo el estilo necesario se encuentra en `styles/globals.css`.
+La aplicación combina utilidades de **Tailwind CSS** con hojas de estilo clásicas.
+Los estilos globales se encuentran en `styles/globals.css` y la configuración de
+Tailwind está en `tailwind.config.js`.
 
 
 ## Licencia
