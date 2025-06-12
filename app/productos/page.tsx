@@ -105,48 +105,73 @@ export default function ProductosPage() {
         </button>
       )}
       <div className="flex flex-col gap-2 mb-4">
-        <input
-          type="text"
-          placeholder="Nombre"
-          value={form.name}
-          onChange={e => setForm({ ...form, name: e.target.value })}
-          className="border rounded px-2 py-1"
-        />
-        <select
-          value={form.unitType}
-          onChange={e => setForm({ ...form, unitType: e.target.value as Product['unitType'] })}
-          className="border rounded px-2 py-1"
-        >
-          <option value="kilo">kilo</option>
-          <option value="envase">envase</option>
-          <option value="unidad">unidad</option>
-          <option value="metro">metro</option>
-        </select>
-        <select
-          value={form.category}
-          onChange={e => setForm({ ...form, category: e.target.value as Category })}
-          className="border rounded px-2 py-1"
-        >
-          {categories.map(cat => (
-            <option key={cat} value={cat}>{cat}</option>
-          ))}
-        </select>
-        <input
-          type="number"
-          step="0.0001"
-          placeholder="Precio"
-          value={form.price}
-          onChange={e => setForm({ ...form, price: parseFloat(e.target.value) })}
-          className="border rounded px-2 py-1"
-        />
-        <input
-          type="number"
-          step="0.01"
-          placeholder="IVA"
-          value={form.vat}
-          onChange={e => setForm({ ...form, vat: parseFloat(e.target.value) })}
-          className="border rounded px-2 py-1"
-        />
+        <label className="flex flex-col">
+          Nombre
+          <input
+            type="text"
+            placeholder="Nombre"
+            value={form.name}
+            onChange={e => setForm({ ...form, name: e.target.value })}
+            className="border rounded px-2 py-1"
+          />
+        </label>
+        <label className="flex flex-col">
+          Tipo de unidad
+          <select
+            value={form.unitType}
+            onChange={e =>
+              setForm({ ...form, unitType: e.target.value as Product['unitType'] })
+            }
+            className="border rounded px-2 py-1"
+          >
+            <option value="kilo">kilo</option>
+            <option value="envase">envase</option>
+            <option value="unidad">unidad</option>
+            <option value="metro">metro</option>
+          </select>
+        </label>
+        <label className="flex flex-col">
+          Categoría
+          <select
+            value={form.category}
+            onChange={e =>
+              setForm({ ...form, category: e.target.value as Category })
+            }
+            className="border rounded px-2 py-1"
+          >
+            {categories.map(cat => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="flex flex-col">
+          Precio (€/unidad)
+          <input
+            type="number"
+            step="0.0001"
+            placeholder="Precio"
+            value={form.price}
+            onChange={e =>
+              setForm({ ...form, price: parseFloat(e.target.value) })
+            }
+            className="border rounded px-2 py-1"
+          />
+        </label>
+        <label className="flex flex-col">
+          IVA (%)
+          <input
+            type="number"
+            step="0.01"
+            placeholder="IVA"
+            value={form.vat}
+            onChange={e =>
+              setForm({ ...form, vat: parseFloat(e.target.value) })
+            }
+            className="border rounded px-2 py-1"
+          />
+        </label>
         <button onClick={saveProduct} className="bg-green-600 text-white py-2 rounded">
           Guardar
         </button>
