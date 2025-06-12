@@ -39,10 +39,6 @@ interface Product {
 
 interface NewEntry {
   productName?: string
-  name: string
-  unitType: UnitType
-  price: number
-  vat: number
   quantity: number
 }
 
@@ -215,73 +211,31 @@ export default function Home() {
   }
 
   const handleProductSelect = (category: string, name: string) => {
-    if (!name) {
-      setNewEntries(prev => ({
-        ...prev,
-        [category]: {
-          name: '',
-          unitType: 'kilo',
-          price: 0,
-          vat: defaultVatForCategory(category),
-          quantity: 0,
-        },
-      }))
-      return
-    }
-    const prod = products.find(p => p.name === name)
-    if (prod) {
-      setNewEntries(prev => ({
-        ...prev,
-        [category]: {
-          productName: prod.name,
-          name: prod.name,
-          unitType: prod.unitType,
-          price: prod.price,
-          vat: prod.vat,
-          quantity: 1,
-        },
-      }))
-    }
+    setNewEntries(prev => ({
+      ...prev,
+      [category]: name ? { productName: name, quantity: 1 } : { quantity: 0 }
+    }))
   }
 
   const addItem = (category: string) => {
     const entry = newEntries[category]
-    if (!entry?.name) return
+    if (!entry?.productName) return
+    const prod = products.find(p => p.name === entry.productName)
+    if (!prod) return
     const newItem: CostItem = {
       id: `${category.toLowerCase()}_${Date.now()}`,
       category,
-      label: entry.name,
-      price: entry.price,
+      label: prod.name,
+      price: prod.price,
       quantity: entry.quantity,
-      unitType: entry.unitType,
-      vat: entry.vat ?? defaultVatForCategory(category),
-    }
-    if (!entry.productName) {
-      fetch('/api/productos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: entry.name,
-          unitType: entry.unitType,
-          price: entry.price,
-          vat: entry.vat,
-          category,
-        })
-      })
-        .then(() => fetch('/api/productos').then(res => res.json()).then(setProducts))
-        .catch(() => {})
+      unitType: prod.unitType,
+      vat: prod.vat,
     }
     setCosts([...costs, newItem])
     setDirty(true)
     setNewEntries(prev => ({
       ...prev,
-      [category]: {
-        name: '',
-        unitType: 'kilo',
-        price: 0,
-        vat: defaultVatForCategory(category),
-        quantity: 0,
-      }
+      [category]: { quantity: 0 }
     }))
   }
 
@@ -459,82 +413,57 @@ export default function Home() {
                       handleProductSelect(cat, e.target.value)}
                     className="border rounded px-2 py-1 mr-2"
                   >
-                    <option value="">Nuevo producto...</option>
+                    <option value="">Añadir producto...</option>
                     {products
-                      .filter(p => !costs.some(c => c.label === p.name))
+                      .filter(p => p.category === cat && !costs.some(c => c.label === p.name))
                       .map(p => (
                         <option key={p.name} value={p.name}>
                           {p.name}
                         </option>
                       ))}
                   </select>
-                  {!newEntries[cat]?.productName && (
-                    <input
-                      type="text"
-                      placeholder="Nombre"
-                      value={newEntries[cat]?.name || ''}
-                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                        handleNewEntryChange(cat, 'name', e.target.value)}
-                      className="border rounded px-2 py-1"
-                    />
-                  )}
                 </td>
                 <td>
-                  <input
-                    type="number"
-                    step={newEntries[cat]?.unitType === 'envase' || newEntries[cat]?.unitType === 'unidad' ? 1 : 0.0001}
-                    placeholder="Cantidad"
-                    value={newEntries[cat]?.quantity || 0}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      handleNewEntryChange(cat, 'quantity', parseFloat(e.target.value))}
-                    className="border rounded px-2 py-1 w-24"
-                  />
-                </td>
-                <td>
-                  {newEntries[cat]?.productName ? (
-                    newEntries[cat].unitType
-                  ) : (
-                    <select
-                      value={newEntries[cat]?.unitType || 'kilo'}
-                      onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                        handleNewEntryChange(cat, 'unitType', e.target.value as UnitType)}
-                      className="border rounded px-2 py-1"
-                    >
-                      <option value="kilo">kilo</option>
-                      <option value="envase">envase</option>
-                      <option value="unidad">unidad</option>
-                      <option value="metro">metro</option>
-                    </select>
-                  )}
-                </td>
-                <td>
-                  {newEntries[cat]?.productName ? (
-                    newEntries[cat].price.toFixed(4)
-                  ) : (
+                  {newEntries[cat]?.productName && (
                     <input
                       type="number"
-                      step="0.0001"
-                      placeholder="Precio"
-                      value={newEntries[cat]?.price || 0}
+                      step={(() => {
+                        const prod = products.find(p => p.name === newEntries[cat]?.productName)
+                        return prod && (prod.unitType === 'envase' || prod.unitType === 'unidad') ? 1 : 0.0001
+                      })()}
+                      value={newEntries[cat]?.quantity || 0}
                       onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                        handleNewEntryChange(cat, 'price', parseFloat(e.target.value))}
+                        handleNewEntryChange(cat, 'quantity', parseFloat(e.target.value))}
                       className="border rounded px-2 py-1 w-24"
                     />
                   )}
                 </td>
                 <td>
-                  <input
-                    type="number"
-                    step="0.01"
-                    placeholder="IVA"
-                    value={newEntries[cat]?.vat ?? defaultVatForCategory(cat)}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      handleNewEntryChange(cat, 'vat', parseFloat(e.target.value))}
-                    className="border rounded px-2 py-1 w-16"
-                  />
+                  {(() => {
+                    const prod = products.find(p => p.name === newEntries[cat]?.productName)
+                    return prod ? prod.unitType : ''
+                  })()}
                 </td>
                 <td>
-                  <button onClick={() => addItem(cat)} className="ml-2 bg-green-600 text-white px-2 py-1 rounded">Añadir</button>
+                  {(() => {
+                    const prod = products.find(p => p.name === newEntries[cat]?.productName)
+                    return prod ? prod.price.toFixed(4) : ''
+                  })()}
+                </td>
+                <td>
+                  {(() => {
+                    const prod = products.find(p => p.name === newEntries[cat]?.productName)
+                    return prod ? prod.vat : ''
+                  })()}
+                </td>
+                <td>
+                  <button
+                    onClick={() => addItem(cat)}
+                    className="ml-2 bg-green-600 text-white px-2 py-1 rounded"
+                    disabled={!newEntries[cat]?.productName}
+                  >
+                    Añadir
+                  </button>
                 </td>
               </tr>
             </tbody>
