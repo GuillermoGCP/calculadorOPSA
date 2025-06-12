@@ -1,7 +1,7 @@
-"use client"
+'use client'
 import { useEffect, useState } from 'react'
 import { downloadWorkbook } from '../../lib/exportExcel'
-import XLSX from 'xlsx'
+import * as XLSX from 'xlsx'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 
@@ -23,7 +23,7 @@ const getTotal = (costs: CostItem[]) =>
   costs.reduce((sum, item) => sum + item.cost, 0)
 
 const getVatTotal = (costs: CostItem[]) =>
-  costs.reduce((sum, item) => sum + item.cost * item.vat / 100, 0)
+  costs.reduce((sum, item) => sum + (item.cost * item.vat) / 100, 0)
 
 const getTotalWithVat = (costs: CostItem[]) => {
   const total = getTotal(costs)
@@ -32,14 +32,14 @@ const getTotalWithVat = (costs: CostItem[]) => {
 }
 
 const getProfit = (costs: CostItem[], margin: number) =>
-  getTotalWithVat(costs) * margin / 100
+  (getTotalWithVat(costs) * margin) / 100
 
 export default function EmpanadasPage() {
   const [list, setList] = useState<Empanada[]>([])
   const router = useRouter()
 
   const fetchList = async () => {
-    const list = await fetch('/api/empanadas').then(res => res.json())
+    const list = await fetch('/api/empanadas').then((res) => res.json())
     setList(list)
   }
 
@@ -57,25 +57,29 @@ export default function EmpanadasPage() {
     if (!confirm('¿Eliminar empanada?')) return
     try {
       await fetch('/api/empanadas?name=' + encodeURIComponent(name), {
-        method: 'DELETE'
+        method: 'DELETE',
       })
       await fetchList()
-      toast.success('Empanada eliminada', { style: { background: '#16a34a', color: '#fff' } })
+      toast.success('Empanada eliminada', {
+        style: { background: '#16a34a', color: '#fff' },
+      })
     } catch {
-      toast.error('Error al eliminar', { style: { background: '#dc2626', color: '#fff' } })
+      toast.error('Error al eliminar', {
+        style: { background: '#dc2626', color: '#fff' },
+      })
     }
   }
 
   return (
-    <div className="p-6 mt-6 max-w-md mx-auto bg-white rounded-lg shadow-lg">
-      <h1 className="text-xl font-bold mb-4">Empanadas guardadas</h1>
+    <div className='p-6 mt-6 max-w-md mx-auto bg-white rounded-lg shadow-lg'>
+      <h1 className='text-xl font-bold mb-4'>Empanadas guardadas</h1>
       <button
-        className="mb-4 bg-blue-700 text-white px-2 py-1 rounded"
+        className='mb-4 bg-blue-700 text-white px-2 py-1 rounded'
         onClick={() => {
           if (list.length === 0) return
           const wb = XLSX.utils.book_new()
-          list.forEach(emp => {
-            const rows = emp.costs.map(c => ({
+          list.forEach((emp) => {
+            const rows = emp.costs.map((c) => ({
               Categoria: c.category,
               Concepto: c.label,
               Coste: c.cost,
@@ -99,20 +103,24 @@ export default function EmpanadasPage() {
       >
         Exportar todas
       </button>
-      <ul className="divide-y">
-        {list.map(emp => {
+      <ul className='divide-y'>
+        {list.map((emp) => {
           const totalWithVat = getTotalWithVat(emp.costs)
           const profit = getProfit(emp.costs, emp.margin)
           return (
-            <li key={emp.name} className="py-2 flex justify-between items-center">
+            <li
+              key={emp.name}
+              className='py-2 flex justify-between items-center'
+            >
               <span
-                className="cursor-pointer text-blue-600 hover:underline"
+                className='cursor-pointer text-blue-600 hover:underline'
                 onClick={() => openEmpanada(emp.name)}
               >
-                {emp.name} - Coste {totalWithVat.toFixed(2)} - Beneficio neto {profit.toFixed(2)}
+                {emp.name} - Coste {totalWithVat.toFixed(2)} - Beneficio neto{' '}
+                {profit.toFixed(2)}
               </span>
               <button
-                className="text-red-600 ml-2 hover:underline"
+                className='text-red-600 ml-2 hover:underline'
                 onClick={() => deleteEmpanada(emp.name)}
               >
                 Eliminar
