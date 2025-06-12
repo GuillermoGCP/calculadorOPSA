@@ -4,14 +4,7 @@ import { downloadWorkbook } from '../../lib/exportExcel'
 import * as XLSX from 'xlsx'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
-
-interface CostItem {
-  id: string
-  category: string
-  label: string
-  cost: number
-  vat: number
-}
+import { CostItem } from '../../types'
 
 interface Empanada {
   name: string

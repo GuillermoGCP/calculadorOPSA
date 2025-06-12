@@ -2,10 +2,9 @@
 import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { getStoredCategories } from '../lib/categories'
+import { UnitType } from '../types'
 
 export type Category = string
-
-export type UnitType = 'kilo' | 'envase' | 'unidad' | 'metro' | 'litro'
 
 export interface Product {
   name: string

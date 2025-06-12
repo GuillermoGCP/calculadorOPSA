@@ -1,17 +1,7 @@
 import mongoose, { Schema, Document, Model } from 'mongoose'
 
 import { UnitType } from './Product'
-
-interface CostItem {
-  id: string
-  category: string
-  label: string
-  price: number
-  quantity: number
-  unitType?: UnitType
-  cost: number
-  vat: number
-}
+import { CostItem } from '../types'
 
 export interface IEmpanada extends Document {
   name: string
