@@ -13,10 +13,14 @@ interface Empanada {
 }
 
 const getTotal = (costs: CostItem[]) =>
-  costs.reduce((sum, item) => sum + item.cost, 0)
+  costs.reduce((sum, item) => sum + (item.cost ?? 0), 0)
 
 const getVatTotal = (costs: CostItem[]) =>
-  costs.reduce((sum, item) => sum + (item.cost * item.vat) / 100, 0)
+  costs.reduce((sum, item) => {
+    const cost = item.cost ?? 0
+    const vat = item.vat ?? 0
+    return sum + (cost * vat) / 100
+  }, 0)
 
 const getTotalWithVat = (costs: CostItem[]) => {
   const total = getTotal(costs)
@@ -99,8 +103,14 @@ export default function EmpanadasPage() {
             rows.push({ Concepto: 'IVA total', Coste: vatTotal })
             rows.push({ Concepto: 'Total con IVA', Coste: totalWithVat })
             rows.push({ Concepto: 'Margen (%)', Coste: emp.margin })
-            rows.push({ Concepto: 'Precio de venta sin IVA', Coste: sellingBase })
-            rows.push({ Concepto: 'Precio de venta con IVA', Coste: sellingWithVat })
+            rows.push({
+              Concepto: 'Precio de venta sin IVA',
+              Coste: sellingBase,
+            })
+            rows.push({
+              Concepto: 'Precio de venta con IVA',
+              Coste: sellingWithVat,
+            })
             rows.push({ Concepto: 'Beneficio neto', Coste: netProfit })
             rows.push({ Concepto: 'Beneficio bruto', Coste: grossProfit })
             const ws = XLSX.utils.json_to_sheet(rows)
@@ -126,7 +136,8 @@ export default function EmpanadasPage() {
                 onClick={() => openEmpanada(emp.name)}
               >
                 {emp.name} - Coste {totalWithVat.toFixed(2)} - Beneficio neto{' '}
-                {netProfit.toFixed(2)} - Beneficio bruto {grossProfit.toFixed(2)}
+                {netProfit.toFixed(2)} - Beneficio bruto{' '}
+                {grossProfit.toFixed(2)}
               </span>
               <button
                 className='text-red-600 ml-2 hover:underline'
