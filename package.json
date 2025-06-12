@@ -31,5 +31,8 @@
     "ts-jest": "^29.1.1",
     "typescript": "^5.2.2"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
 }
