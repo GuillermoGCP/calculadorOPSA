@@ -321,8 +321,10 @@ export default function Home() {
     0
   )
   const totalWithVat = total + vatTotal
-  const sellingPrice = totalWithVat * (1 + (margin || 0) / 100)
-  const profit = sellingPrice - totalWithVat
+  const sellingBase = totalWithVat * (1 + (margin || 0) / 100)
+  const sellingWithVat = sellingBase * 1.1
+  const grossProfit = sellingWithVat - totalWithVat
+  const netProfit = sellingBase - totalWithVat
 
   const categories = ORDERED_CATEGORIES
 
@@ -541,8 +543,10 @@ export default function Home() {
           rows.push({ Concepto: 'IVA total', Coste: vatTotal })
           rows.push({ Concepto: 'Total con IVA', Coste: totalWithVat })
           rows.push({ Concepto: 'Margen (%)', Coste: margin })
-          rows.push({ Concepto: 'Precio de venta', Coste: sellingPrice })
-          rows.push({ Concepto: 'Beneficio', Coste: profit })
+          rows.push({ Concepto: 'Precio de venta sin IVA', Coste: sellingBase })
+          rows.push({ Concepto: 'Precio de venta con IVA', Coste: sellingWithVat })
+          rows.push({ Concepto: 'Beneficio neto', Coste: netProfit })
+          rows.push({ Concepto: 'Beneficio bruto', Coste: grossProfit })
           const wb = createWorkbookFromObjects(rows, name || 'Empanada')
           downloadWorkbook(wb, (name || 'empanada') + '.xlsx')
         }}
@@ -556,8 +560,9 @@ export default function Home() {
           <p>Total: {total.toFixed(4)} €</p>
           <p>IVA total: {vatTotal.toFixed(4)} €</p>
           <p>Total con IVA: {totalWithVat.toFixed(4)} €</p>
-          <p>Precio de venta: {sellingPrice.toFixed(4)} €</p>
-          <p>Beneficio: {profit.toFixed(4)} €</p>
+          <p>Precio de venta con IVA: {sellingWithVat.toFixed(4)} €</p>
+          <p>Beneficio neto: {netProfit.toFixed(4)} €</p>
+          <p>Beneficio bruto: {grossProfit.toFixed(4)} €</p>
         </div>
       )}
 

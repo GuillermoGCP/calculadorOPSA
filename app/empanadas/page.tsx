@@ -31,8 +31,17 @@ const getTotalWithVat = (costs: CostItem[]) => {
   return total + vatTotal
 }
 
-const getProfit = (costs: CostItem[], margin: number) =>
-  (getTotalWithVat(costs) * margin) / 100
+const getSellingBase = (costs: CostItem[], margin: number) =>
+  getTotalWithVat(costs) * (1 + margin / 100)
+
+const getSellingWithVat = (costs: CostItem[], margin: number) =>
+  getSellingBase(costs, margin) * 1.1
+
+const getNetProfit = (costs: CostItem[], margin: number) =>
+  getSellingBase(costs, margin) - getTotalWithVat(costs)
+
+const getGrossProfit = (costs: CostItem[], margin: number) =>
+  getSellingWithVat(costs, margin) - getTotalWithVat(costs)
 
 export default function EmpanadasPage() {
   const [list, setList] = useState<Empanada[]>([])
@@ -88,13 +97,19 @@ export default function EmpanadasPage() {
             const total = getTotal(emp.costs)
             const vatTotal = getVatTotal(emp.costs)
             const totalWithVat = total + vatTotal
-            const profit = getProfit(emp.costs, emp.margin)
+            const sellingBase = getSellingBase(emp.costs, emp.margin)
+            const sellingWithVat = getSellingWithVat(emp.costs, emp.margin)
+            const netProfit = getNetProfit(emp.costs, emp.margin)
+            const grossProfit = getGrossProfit(emp.costs, emp.margin)
             rows.push({})
             rows.push({ Concepto: 'Total', Coste: total })
             rows.push({ Concepto: 'IVA total', Coste: vatTotal })
             rows.push({ Concepto: 'Total con IVA', Coste: totalWithVat })
             rows.push({ Concepto: 'Margen (%)', Coste: emp.margin })
-            rows.push({ Concepto: 'Beneficio', Coste: profit })
+            rows.push({ Concepto: 'Precio de venta sin IVA', Coste: sellingBase })
+            rows.push({ Concepto: 'Precio de venta con IVA', Coste: sellingWithVat })
+            rows.push({ Concepto: 'Beneficio neto', Coste: netProfit })
+            rows.push({ Concepto: 'Beneficio bruto', Coste: grossProfit })
             const ws = XLSX.utils.json_to_sheet(rows)
             XLSX.utils.book_append_sheet(wb, ws, emp.name)
           })
@@ -106,7 +121,8 @@ export default function EmpanadasPage() {
       <ul className='divide-y'>
         {list.map((emp) => {
           const totalWithVat = getTotalWithVat(emp.costs)
-          const profit = getProfit(emp.costs, emp.margin)
+          const netProfit = getNetProfit(emp.costs, emp.margin)
+          const grossProfit = getGrossProfit(emp.costs, emp.margin)
           return (
             <li
               key={emp.name}
@@ -117,7 +133,7 @@ export default function EmpanadasPage() {
                 onClick={() => openEmpanada(emp.name)}
               >
                 {emp.name} - Coste {totalWithVat.toFixed(2)} - Beneficio neto{' '}
-                {profit.toFixed(2)}
+                {netProfit.toFixed(2)} - Beneficio bruto {grossProfit.toFixed(2)}
               </span>
               <button
                 className='text-red-600 ml-2 hover:underline'
