@@ -27,6 +27,14 @@ type Category =
   | 'Envasado y Etiquetado'
   | 'Mano de obra'
 
+const ORDERED_CATEGORIES: Category[] = [
+  'Relleno',
+  'Masa',
+  'Horneado',
+  'Envasado y Etiquetado',
+  'Mano de obra',
+]
+
 type UnitType = 'kilo' | 'envase' | 'unidad' | 'metro'
 
 interface Product {
@@ -312,7 +320,7 @@ export default function Home() {
   const sellingPrice = totalWithVat * (1 + (margin || 0) / 100)
   const profit = sellingPrice - totalWithVat
 
-  const categories = Array.from(new Set(costs.map(c => c.category)))
+  const categories = ORDERED_CATEGORIES
 
   return (
 
@@ -366,6 +374,7 @@ export default function Home() {
                 <th className="pb-1">Cantidad</th>
                 <th className="pb-1">Medida</th>
                 <th className="pb-1">Precio</th>
+                <th className="pb-1">Costo</th>
                 <th className="pb-1">IVA (%)</th>
                 <th className="pb-1">Acciones</th>
               </tr>
@@ -387,6 +396,7 @@ export default function Home() {
                   </td>
                   <td>{item.unitType}</td>
                   <td>{item.price.toFixed(4)}</td>
+                  <td>{calculateCost(item).toFixed(4)}</td>
                   <td>{item.vat}</td>
                   <td>
                     <button
@@ -448,6 +458,17 @@ export default function Home() {
                   {(() => {
                     const prod = products.find(p => p.name === newEntries[cat]?.productName)
                     return prod ? prod.price.toFixed(4) : ''
+                  })()}
+                </td>
+                <td>
+                  {(() => {
+                    const prod = products.find(p => p.name === newEntries[cat]?.productName)
+                    if (!prod) return ''
+                    const qty =
+                      prod.unitType === 'envase' || prod.unitType === 'unidad'
+                        ? Math.round(newEntries[cat]?.quantity || 0)
+                        : newEntries[cat]?.quantity || 0
+                    return (prod.price * qty).toFixed(4)
                   })()}
                 </td>
                 <td>
