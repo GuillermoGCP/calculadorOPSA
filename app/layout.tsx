@@ -2,7 +2,6 @@ import '../styles/globals.css'
 import type { ReactNode } from 'react'
 import Header from '../components/Header'
 import ToastProvider from '../components/ToastProvider'
-import '../styles/globals.css'
 
 export const metadata = {
   title: 'Calculador OPSA',
