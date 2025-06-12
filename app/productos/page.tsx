@@ -127,7 +127,7 @@ export default function ProductosPage() {
   }
 
   return (
-    <div className='p-6 mt-6 max-w-md mx-auto bg-white rounded-lg shadow-lg'>
+    <div className='p-4 sm:p-6 mt-6 max-w-full md:max-w-2xl mx-auto bg-white rounded-lg shadow-lg'>
       <h1 className='text-xl font-bold mb-4'>Productos</h1>
       <button
         onClick={() => {

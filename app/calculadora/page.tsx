@@ -323,10 +323,10 @@ export default function Home() {
 
   return (
 
-    <div className="p-6 mt-6 font-sans max-w-screen-lg mx-auto bg-white rounded-lg shadow-lg">
+    <div className="p-4 sm:p-6 mt-6 font-sans max-w-full lg:max-w-screen-lg mx-auto bg-white rounded-lg shadow-lg">
       <h1 className="text-2xl font-bold mb-4">{name && `${name} - `}Calculadora de Costes de Empanadas</h1>
 
-      <div className="mb-4">
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center gap-2">
         <input
           type="text"
           placeholder="Nombre de empanada"
@@ -337,7 +337,7 @@ export default function Home() {
           }}
           className="border rounded px-2 py-1"
         />
-        <button onClick={saveEmpanada} className="ml-2 bg-green-600 text-white px-3 py-1 rounded">Guardar empanada</button>
+        <button onClick={() => saveEmpanada()} className="ml-2 bg-green-600 text-white px-3 py-1 rounded">Guardar empanada</button>
         {loadedEmpanada && (
           <button
             onClick={() => saveEmpanada(loadedEmpanada.name, true)}
@@ -348,7 +348,7 @@ export default function Home() {
         )}
       </div>
 
-      <div className="mb-4">
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center gap-2">
         <select
           value={selected}
           onChange={(e: ChangeEvent<HTMLSelectElement>) => setSelected(e.target.value)}
@@ -372,7 +372,7 @@ export default function Home() {
 
 
       {categories.map(cat => (
-        <div key={cat} className="mb-4">
+        <div key={cat} className="mb-4 overflow-x-auto">
           <h2 className="text-xl font-semibold mb-2">{cat}</h2>
           <table className="w-full border-collapse table-auto">
             <thead>
