@@ -38,4 +38,16 @@ describe('ProductosPage category addition', () => {
     expect(select.options.length).toBe(initialCount)
     expect((toast.error as jest.Mock).mock.calls[0][0]).toBe('La categoría ya existe')
   })
+
+  it('layouts form and list responsively', () => {
+    const { container } = render(<ProductosPage />)
+    const formDiv = container.querySelector('div[class*=\"md:w-1/3\"]')
+    const listDiv = container.querySelector('div[class*=\"md:w-2/3\"]')
+    expect(formDiv).toBeInTheDocument()
+    expect(listDiv).toBeInTheDocument()
+    expect(formDiv?.parentElement).toBe(listDiv?.parentElement)
+    const parentClass = formDiv?.parentElement?.className || ''
+    expect(parentClass).toContain('md:flex')
+    expect(parentClass).toContain('flex-col')
+  })
 })
