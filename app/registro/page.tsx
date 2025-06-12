@@ -24,7 +24,7 @@ export default function Registro() {
   }
 
   return (
-    <div className="p-6 mt-6 max-w-sm mx-auto bg-white rounded-lg shadow-lg">
+    <div className="p-4 sm:p-6 mt-6 max-w-full sm:max-w-sm md:max-w-md mx-auto bg-white rounded-lg shadow-lg">
       <h1 className="text-xl font-bold mb-4 text-center">Registro</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-2">
         <input
