@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useState } from 'react'
+import { createWorkbookFromObjects, downloadWorkbook } from '../../lib/exportExcel'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 import {
@@ -107,6 +108,23 @@ export default function ProductosPage() {
   return (
     <div className="p-6 mt-6 max-w-md mx-auto bg-white rounded-lg shadow-lg">
       <h1 className="text-xl font-bold mb-4">Productos</h1>
+      <button
+        onClick={() => {
+          if (list.length === 0) return
+          const rows = list.map(p => ({
+            Nombre: p.name,
+            Unidad: p.unitType,
+            Precio: p.price,
+            IVA: p.vat,
+            Categoria: p.category || '',
+          }))
+          const wb = createWorkbookFromObjects(rows, 'Productos')
+          downloadWorkbook(wb, 'productos.xlsx')
+        }}
+        className="mb-4 bg-blue-700 text-white px-2 py-1 rounded"
+      >
+        Exportar lista
+      </button>
       {returnUrl && (
         <button
           onClick={() => router.push(returnUrl)}

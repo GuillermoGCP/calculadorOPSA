@@ -1,5 +1,7 @@
 "use client"
 import { useEffect, useState } from 'react'
+import { downloadWorkbook } from '../../lib/exportExcel'
+import XLSX from 'xlsx'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 
@@ -67,6 +69,36 @@ export default function EmpanadasPage() {
   return (
     <div className="p-6 mt-6 max-w-md mx-auto bg-white rounded-lg shadow-lg">
       <h1 className="text-xl font-bold mb-4">Empanadas guardadas</h1>
+      <button
+        className="mb-4 bg-blue-700 text-white px-2 py-1 rounded"
+        onClick={() => {
+          if (list.length === 0) return
+          const wb = XLSX.utils.book_new()
+          list.forEach(emp => {
+            const rows = emp.costs.map(c => ({
+              Categoria: c.category,
+              Concepto: c.label,
+              Coste: c.cost,
+              IVA: c.vat,
+            }))
+            const total = getTotal(emp.costs)
+            const vatTotal = getVatTotal(emp.costs)
+            const totalWithVat = total + vatTotal
+            const profit = getProfit(emp.costs, emp.margin)
+            rows.push({})
+            rows.push({ Concepto: 'Total', Coste: total })
+            rows.push({ Concepto: 'IVA total', Coste: vatTotal })
+            rows.push({ Concepto: 'Total con IVA', Coste: totalWithVat })
+            rows.push({ Concepto: 'Margen (%)', Coste: emp.margin })
+            rows.push({ Concepto: 'Beneficio', Coste: profit })
+            const ws = XLSX.utils.json_to_sheet(rows)
+            XLSX.utils.book_append_sheet(wb, ws, emp.name)
+          })
+          downloadWorkbook(wb, 'empanadas.xlsx')
+        }}
+      >
+        Exportar todas
+      </button>
       <ul className="divide-y">
         {list.map(emp => {
           const totalWithVat = getTotalWithVat(emp.costs)
