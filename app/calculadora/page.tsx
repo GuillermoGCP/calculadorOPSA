@@ -513,7 +513,8 @@ export default function Home() {
       toast.success('Empanada guardada', {
         style: { background: '#16a34a', color: '#fff' },
       })
-      const savedEmp = list.find((e) => e.name === empName)
+      const savedEmp = list.find((e: Empanada) => e.name === empName)
+
       if (savedEmp) {
         setLoadedEmpanada(savedEmp)
         setName(empName)
