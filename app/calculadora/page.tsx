@@ -166,9 +166,6 @@ export default function Home() {
         if (list.length > 0) {
           loadEmpanada(list[0])
           setName(list[0].name)
-          toast.info('Se cargó la primera empanada guardada', {
-            style: { background: '#16a34a', color: '#fff' },
-          })
         } else {
           toast.info('No hay empanadas guardadas. Usando valores por defecto', {
             style: { background: '#2563eb', color: '#fff' },
